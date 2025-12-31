@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Adaptive, local-first radon mitigation fan automation for homes." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="container">
+    <header class="nav">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1 id="companyName">Residential Radon Solutions, LLC</h1>
+          <p id="tagline">Adaptive control for residential radon mitigation fans</p>
+        </div>
+      </div>
+      <nav class="navlinks" aria-label="primary">
+        <a href="#benefits">Benefits</a>
+        <a href="#how">How it works</a>
+        <a href="#proof">Proof</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <div class="card heroMain">
+        <div class="kicker">Local-first • Automatic • Practical savings</div>
+        <h2><span id="productName">Smart Radon Fan</span> — adaptive control for residential radon mitigation</h2>
+        <p>
+          A controller monitors indoor radon and automatically turns a mitigation fan on and off using threshold + hysteresis logic.
+          The result: better efficiency, lower utility cost, less noise, and longer fan life — all without relying on cloud services.
+        </p>
+        <div class="ctaRow">
+          <a class="btn btnPrimary" href="#contact">Request information</a>
+          <a class="btn btnSecondary" href="#how">See the system overview</a>
+        </div>
+        <p class="small" style="margin-top:10px">Designed for stand-alone operation on a local network (no subscription required).</p>
+      </div>
+
+      <aside class="card heroSide">
+        <img src="assets/Residential fan and ventilation stack.jpg" alt="Residential radon mitigation fan and ventilation stack" />
+        <div class="miniGrid">
+          <div class="mini">
+            <h4>Efficiency</h4>
+            <p>Runs the fan when needed based on measured radon levels.</p>
+          </div>
+          <div class="mini">
+            <h4>Quiet</h4>
+            <p>Less runtime can reduce audible fan noise in and around the home.</p>
+          </div>
+          <div class="mini">
+            <h4>Fan longevity</h4>
+            <p>Reduced duty cycle can extend fan life and reduce wear.</p>
+          </div>
+          <div class="mini">
+            <h4>Local-only</h4>
+            <p>Operates over your LAN, independently of cloud services.</p>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section id="benefits" class="section">
+      <div class="sectionHeader">
+        <h3>Why homeowners want automation</h3>
+        <p>
+          Most residential radon fans run continuously. This system adds modern feedback control: measure radon, switch the fan intelligently,
+          log results, and visualize performance — automatically.
+        </p>
+      </div>
+
+      <div class="grid4">
+        <div class="feature">
+          <div class="icon" aria-hidden="true">⚡</div>
+          <h4>Utility cost savings</h4>
+          <p>Reduces unnecessary fan runtime while maintaining safe indoor radon levels.</p>
+        </div>
+        <div class="feature">
+          <div class="icon" aria-hidden="true">🔇</div>
+          <h4>Noise reduction</h4>
+          <p>Less fan operation can reduce acoustic noise around the home.</p>
+        </div>
+        <div class="feature">
+          <div class="icon" aria-hidden="true">🛠️</div>
+          <h4>Improved fan life</h4>
+          <p>Hysteresis-based control avoids rapid cycling and can reduce wear.</p>
+        </div>
+        <div class="feature">
+          <div class="icon" aria-hidden="true">🏠</div>
+          <h4>Expected modern automation</h4>
+          <p>Closed-loop control for a common residential utility — simple, practical, overdue.</p>
+        </div>
+      </div>
+
+      <div style="height:14px"></div>
+      <div class="callout">
+        <div class="left">
+          <h4>Local-first, autonomous operation</h4>
+          <p>
+            The controller communicates locally with a radon sensor and a controllable power interface (e.g., a smart plug),
+            applies threshold + hysteresis logic, logs measurements and fan state, and generates historical visualizations accessible on your LAN.
+          </p>
+        </div>
+        <div class="badges" aria-label="highlights">
+          <span class="badge">No cloud dependency</span>
+          <span class="badge">Automatic recovery after power loss</span>
+          <span class="badge">Install-friendly onboarding</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="how" class="section">
+      <div class="sectionHeader">
+        <h3>How it works</h3>
+        <p>
+          A radon sensor reports indoor concentrations. A controller compares the readings to configurable on/off thresholds, applies hysteresis,
+          and turns the mitigation fan on or off through a controllable power interface.
+        </p>
+      </div>
+
+      <div class="split">
+        <div class="panel">
+          <h4>System components</h4>
+          <ul>
+            <li><strong>Radon sensor</strong> providing short-term and/or long-term readings.</li>
+            <li><strong>Controller</strong> (embedded platform) running the automation logic.</li>
+            <li><strong>Controllable power interface</strong> (smart plug / relay) powering the fan.</li>
+            <li><strong>Radon mitigation fan</strong> and vent stack as commonly installed in homes.</li>
+          </ul>
+          <img src="assets/Radon System Schematic 1.jpg" alt="System schematic diagram" />
+        </div>
+
+        <div class="panel">
+          <h4>Installer-friendly setup</h4>
+          <ul>
+            <li>Simple onboarding flow accessible from a smartphone.</li>
+            <li>Runs locally on your network and is viewable via IP address.</li>
+            <li>Logs radon and fan state history for confidence and verification.</li>
+          </ul>
+          <img src="assets/Smartphone Installer Page.png" alt="Smartphone installer page" />
+        </div>
+      </div>
+    </section>
+
+    <section id="proof" class="section">
+      <div class="sectionHeader">
+        <h3>See what the system records</h3>
+        <p>
+          The controller logs radon readings and fan state, and generates time-series visualizations accessible on a local network.
+          This provides transparency and helps validate mitigation performance.
+        </p>
+      </div>
+
+      <div class="split">
+        <div class="panel">
+          <h4>Historical radon chart</h4>
+          <p class="small">Example chart showing radon levels with fan ON/OFF state and thresholds.</p>
+          <img src="assets/radon-chart.png" alt="Radon chart example" />
+        </div>
+        <div class="panel">
+          <h4>Hardware in practice</h4>
+          <p class="small">Compact embedded controller + sensor integration for residential deployment.</p>
+          <img src="assets/Pi and Airthings.jpg" alt="Raspberry Pi controller with radon sensor" />
+          <div style="height:10px"></div>
+          <img src="assets/Airthings up close.jpg" alt="Radon sensor close-up" />
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="section">
+      <div class="sectionHeader">
+        <h3>Contact</h3>
+        <p>
+          Interested in pilots, partnerships, or early access? Reach out.
+        </p>
+      </div>
+
+      <div class="split">
+        <div class="panel">
+          <h4 id="contactName">Michael J. Gutmann</h4>
+          <p style="margin:0;color:var(--muted)">
+            <span id="contactAddress">1125 NE 3rd Avenue, Hillsboro, OR 97124</span><br />
+            <span id="contactPhone">503 869 9507</span>
+          </p>
+          <div style="height:10px"></div>
+          <p class="small">
+            Note: This website is an informational mockup. Product name and company name are placeholders and can be updated.
+          </p>
+        </div>
+        <div class="panel">
+          <h4>What we’re building</h4>
+          <ul>
+            <li>Adaptive residential radon mitigation fan control with hysteresis</li>
+            <li>Local logging + chart visualization</li>
+            <li>Autonomous operation with power-loss recovery</li>
+          </ul>
+          <p class="small">Safety note: Always follow applicable mitigation standards and verify performance with appropriate testing.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="row">
+        <div>
+          <div style="font-weight:650;color:var(--text)"><span id="productName">Smart Radon Fan</span></div>
+          <div class="small">© <span id="companyName">Residential Radon Solutions, LLC</span> — mockup site</div>
+        </div>
+        <div class="badges">
+          <span class="badge">Local-first</span>
+          <span class="badge">Threshold + hysteresis</span>
+          <span class="badge">Autonomous</span>
+        </div>
+      </div>
+      <div style="height:10px"></div>
+      <div class="small">
+        This site summarizes key concepts such as threshold-based control with hysteresis, local logging, and local network visualization.
+      </div>
+    </footer>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
