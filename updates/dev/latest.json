@@ -1,6 +1,8 @@
 {
   "channel": "dev",
-  "version": "placeholder",
-  "notes": "initial setup"
+  "version": "1.0.0-beta5.1",
+  "bundle_url": "https://www.smartradonfan.com/updates/dev/radonbox-1.0.0-beta5.1.tar.gz",
+  "sig_url": "https://www.smartradonfan.com/updates/dev/radonbox-1.0.0-beta5.1.tar.gz.minisig",
+  "notes": "Beta5.1 - Support UI + updater"
 }
 
