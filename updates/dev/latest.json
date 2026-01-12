@@ -1,10 +1,11 @@
 {
   "channel": "dev",
-  "version": "1.0.0-beta5.2",
-  "bundle_url": "https://www.smartradonfan.com/updates/dev/radonbox-1.0.0-beta5.2.tar.gz",
-  "sig_url": "https://www.smartradonfan.com/updates/dev/radonbox-1.0.0-beta5.2.tar.gz.minisig",
-  "notes": "Beta5.2 - Unified nav"
+  "version": "1.0.0-beta5.3",
+  "bundle_url": "https://www.smartradonfan.com/updates/dev/radonbox-1.0.0-beta5.3.tar.gz",
+  "sig_url": "https://www.smartradonfan.com/updates/dev/radonbox-1.0.0-beta5.3.tar.gz.minisig",
+  "notes": "Beta5.3 - Portal improvements"
 }
+
 
 
 
