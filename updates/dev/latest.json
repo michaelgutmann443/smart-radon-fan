@@ -1,10 +1,11 @@
 {
   "channel": "dev",
-  "version": "1.0.0-beta5.5",
-  "bundle_url": "https://www.smartradonfan.com/updates/dev/radonbox-1.0.0-beta5.5.tar.gz",
-  "sig_url": "https://www.smartradonfan.com/updates/dev/radonbox-1.0.0-beta5.5.tar.gz.minisig",
-  "notes": "Beta5.5 - Shelly address added to Reset"
+  "version": "1.0.0-beta5.6",
+  "bundle_url": "https://www.smartradonfan.com/updates/dev/radonbox-1.0.0-beta5.6.tar.gz",
+  "sig_url": "https://www.smartradonfan.com/updates/dev/radonbox-1.0.0-beta5.6.tar.gz.minisig",
+  "notes": "Beta5.6 - Checking Factory Reset after an Update"
 }
+
 
 
 
