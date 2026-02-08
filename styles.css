@@ -32,8 +32,8 @@ a{color:inherit}
   display:flex;align-items:center;gap:12px;
 }
 .logo{
-  width:40px;height:40px;border-radius:14px;
-  background: linear-gradient(135deg, rgba(94,234,212,.95), rgba(96,165,250,.95));
+  width:40px;height:40px;border-radius: 0;
+  background: transparent;
   box-shadow: 0 12px 30px rgba(96,165,250,.18);
 }
 .brand h1{font-size:14px;margin:0;letter-spacing:.3px}
@@ -187,4 +187,29 @@ a{color:inherit}
 @media (max-width: 900px){
   .docSection .figure.figureSmall{max-width: 100%;}
   .docSection .figure.figureSmall img{max-height: 360px;}
+}
+
+
+.logoimg {
+  width: 252px;
+  height: 252px;
+  margin-right: 18px;
+  margin-top: 30px;   /* moved further down */
+}
+@media (max-width:720px) {
+  .logoimg {
+    width: 192px;
+    height: 192px;
+    margin-right: 12px;
+    margin-top: 18px;
+  }
+}}}
+
+/* Ensure logo + title are vertically centered */
+.header,
+.site-header,
+.header-inner,
+.hero-header {
+  display: flex;
+  align-items: center;
 }
