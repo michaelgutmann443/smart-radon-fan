@@ -38,7 +38,7 @@ a{color:inherit}
 }
 .brand h1{font-size:14px;margin:0;letter-spacing:.3px}
 .brand p{margin:0;color:var(--muted);font-size:12px}
-.navlinks{display:flex;gap:18px;align-items:center}
+.navlinks{display:flex;gap:18px;align-items:center;flex-wrap:nowrap}
 .navlinks a{opacity:.9;text-decoration:none;font-size:13px;color:var(--muted)}
 .navlinks a:hover{color:var(--text)}
 
@@ -221,3 +221,33 @@ a{color:inherit}
   display: flex;
   align-items: center;
 }
+
+
+/* --- Mobile nav fix --- */
+@media (max-width: 720px){
+  .container{padding:16px}
+  .nav{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:10px;
+  }
+  .navlinks{
+    flex-wrap:wrap;
+    gap:10px 14px;
+    width:100%;
+  }
+  .navlinks a{
+    white-space:nowrap;
+    font-size:14px;
+    padding:6px 10px;
+  }
+  /* keep the brand from forcing horizontal overflow */
+  .brand{
+    width:100%;
+  }
+  .brand h1{font-size:16px}
+  .brand p{font-size:12px}
+  /* if logo is clickable wrapper */
+  .logoLink{display:inline-flex}
+}
+
