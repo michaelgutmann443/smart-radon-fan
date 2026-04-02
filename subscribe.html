@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Enable Smart Radon Fan weekly reports." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="container">
+
+    <!-- NAV (copied from index.html) -->
+    <header class="nav">
+      <div class="brand">
+        <a class="logoLink" href="index.html">
+          <img class="logoimg" src="assets/srf-logo.png" alt="Smart Radon Fan logo" />
+        </a>
+        <div>
+          <h1>Residential Radon Solutions, LLC</h1>
+          <p>Adaptive control for residential radon mitigation fans</p>
+        </div>
+      </div>
+      <nav class="navlinks">
+        <a href="index.html">Home</a>
+        <a href="guide.html">Setup Guide</a>
+        <a href="whitepapers.html">White Papers</a>
+        <a href="index.html#contact">Contact</a>
+      </nav>
+    </header>
+
+    <!-- HERO CARD -->
+    <section class="section">
+      <div class="card heroMain" style="max-width:640px;margin:0 auto;">
+        <div class="kicker">Weekly Reports • Automatic • No login required</div>
+        <h2>Enable Weekly Radon Reports</h2>
+        <p>
+          Receive a weekly summary of your Smart Radon Fan system, including current radon levels,
+          fan activity, and a 30-day chart — delivered directly to your email.
+        </p>
+
+        <div style="margin-top:18px">
+
+          <!-- EMAIL -->
+          <label>Email</label>
+          <input id="email" type="email"
+            placeholder="you@example.com"
+            style="width:100%;margin-top:6px;margin-bottom:14px;padding:10px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,.03);color:var(--text);"
+          />
+
+          <!-- CLAIM CODE -->
+          <label>Claim Code</label>
+          <input id="claimCode" type="text"
+            placeholder="SRF-XXXX-XXXX-X"
+            style="width:100%;margin-top:6px;margin-bottom:18px;padding:10px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,.03);color:var(--text);"
+          />
+
+          <!-- BUTTON -->
+          <button class="btn btnPrimary" style="width:100%" onclick="subscribe()">
+            Start Weekly Reports
+          </button>
+
+          <!-- RESULT -->
+          <div id="result" style="margin-top:16px"></div>
+
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="small">
+        Smart Radon Fan — automated radon monitoring and reporting.
+      </div>
+    </footer>
+
+  </div>
+
+<script>
+async function subscribe() {
+  const email = document.getElementById("email").value.trim();
+  const claimCode = document.getElementById("claimCode").value.trim();
+  const resultDiv = document.getElementById("result");
+
+  resultDiv.innerHTML = "";
+
+  if (!email || !claimCode) {
+    resultDiv.innerHTML = "<p style='color:#f87171'>Please enter both email and claim code.</p>";
+    return;
+  }
+
+  try {
+    const res = await fetch("https://api.smartradonfan.com/api/beta-subscribe", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        email: email,
+        claim_code: claimCode
+      })
+    });
+
+    const data = await res.json();
+
+    if (data.ok) {
+      resultDiv.innerHTML = `
+        <div class="callout" style="margin-top:10px">
+          <div class="left">
+            <h4>Weekly reports enabled</h4>
+            <p>
+              ${data.site_name || ""} — ${data.device_label || ""}
+            </p>
+            <p class="small">Reports will be sent to ${email}</p>
+          </div>
+        </div>
+      `;
+    } else {
+      resultDiv.innerHTML = `
+        <p style="color:#f87171">${data.message}</p>
+      `;
+    }
+
+  } catch (err) {
+    resultDiv.innerHTML = `
+      <p style="color:#f87171">Network error. Please try again.</p>
+    `;
+  }
+}
+</script>
+
+</body>
+</html>
