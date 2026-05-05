@@ -333,3 +333,9 @@ a{color:inherit}
     grid-template-columns:1fr !important;
   }
 }
+
+#contactEmail {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--text);
+}
