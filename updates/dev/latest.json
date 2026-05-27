@@ -1,9 +1,9 @@
 {
   "channel": "dev",
-  "version": "1.0.0-beta8.0",
-  "bundle_url": "https://www.smartradonfan.com/updates/dev/radonbox-1.0.0-beta8.0.tar.gz",
-  "sig_url": "https://www.smartradonfan.com/updates/dev/radonbox-1.0.0-beta8.0.tar.gz.minisig",
-  "notes": "Beta8.0 -- Shelly and Pi dynamic IP support"
+  "version": "1.0.0-beta9.0",
+  "bundle_url": "https://www.smartradonfan.com/updates/dev/radonbox-1.0.0-beta9.0.tar.gz",
+  "sig_url": "https://www.smartradonfan.com/updates/dev/radonbox-1.0.0-beta9.0.tar.gz.minisig",
+  "notes": "Beta9.0 -- Additional Fault-Tolerant Support"
 }
 
 
