@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Adaptive, local-first radon mitigation fan automation for homes." />
+  <meta name="description" content="Smart Radon Fan (SmRF) provides radon mitigation monitoring and control, with remote Viewer tools and automated radon fan control." />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -13,7 +13,7 @@
         <a class="logoLink" href="index.html"><img class="logoimg" src="assets/srf-logo.png" alt="Smart Radon Fan logo" /></a>
         <div>
           <h1 id="companyName">Residential Radon Solutions, LLC</h1>
-          <p id="tagline">Adaptive control for residential radon mitigation fans</p>
+          <p id="tagline">Radon mitigation monitoring and control</p>
         </div>
       </div>
       <nav class="navlinks" aria-label="primary">
@@ -24,25 +24,25 @@
         <a href="whitepapers.html">White Papers</a>
         <a href="index.html#benefits">Benefits</a>
         <a href="index.html#how">How it works</a>
-        <a href="index.html#proof">Proof</a>
+        <a href="viewer.html">Viewer</a>
         <a href="index.html#contact">Contact</a>
       </nav>
     </header>
 
     <section class="hero">
       <div class="card heroMain">
-        <div class="kicker">Local-first • Automatic • Practical savings</div>
-        <h2><span id="productName">Smart Radon Fan</span> — adaptive control for residential radon mitigation</h2>
+        <div class="kicker">Monitoring • Management • Automated fan control</div>
+        <h2><span id="productName">Smart Radon Fan</span> — radon mitigation monitoring and control</h2>
         <p>
-          A controller monitors indoor radon and automatically turns a mitigation fan on and off using threshold + hysteresis logic.
-          The result: better efficiency, lower utility cost, less noise, and longer fan life — all without relying on cloud services.
+          SmRF provides remote monitoring and management of radon mitigation systems, with automated control of the radon fan.
+          The result: visibility into mitigation performance, historical reporting, installer support tools, and intelligent fan operation when control is enabled.
         </p>
         <div class="ctaRow">
           <a class="btn btnPrimary" href="beta.html">Become a Beta Participant</a>
           <a class="btn btnSecondary" href="subscribe.html">Enable Weekly Reports</a>
-          <a class="btn btnSecondary" href="index.html#how">See the system overview</a>
+          <a class="btn btnSecondary" href="viewer.html">See the SmRF Viewer</a>
         </div>
-        <p class="small" style="margin-top:10px">Designed for stand-alone operation on a local network (no subscription required).</p>
+        <p class="small" style="margin-top:10px">Designed for monitoring, verification, reporting, and automated radon fan control.</p>
       </div>
 
       <aside class="card heroSide">
@@ -61,8 +61,8 @@
             <p>Reduced duty cycle can extend fan life and reduce wear.</p>
           </div>
           <div class="mini">
-            <h4>Local-only</h4>
-            <p>Operates over your LAN, independently of cloud services.</p>
+            <h4>Visibility</h4>
+            <p>Viewer tools show radon levels, fan status, reports, and mitigation performance.</p>
           </div>
         </div>
       </aside>
@@ -70,18 +70,18 @@
 
     <section id="benefits" class="section">
       <div class="sectionHeader">
-        <h3>Why homeowners want automation</h3>
+        <h3>Why mitigation needs monitoring and control</h3>
         <p>
-          Most residential radon fans run continuously. This system adds modern feedback control: measure radon, switch the fan intelligently,
-          log results, and visualize performance — automatically.
+          Most residential radon systems are installed and then disappear from view. SmRF adds modern visibility and control:
+          measure radon, track performance, report results, and automate the fan when control is enabled.
         </p>
       </div>
 
       <div class="grid4">
         <div class="feature">
-          <div class="icon" aria-hidden="true">⚡</div>
-          <h4>Utility cost savings</h4>
-          <p>Reduces unnecessary fan runtime while maintaining safe indoor radon levels.</p>
+          <div class="icon" aria-hidden="true">📊</div>
+          <h4>Mitigation visibility</h4>
+          <p>Tracks radon readings, fan state, and system status so performance is no longer a black box.</p>
         </div>
         <div class="feature">
           <div class="icon" aria-hidden="true">🔇</div>
@@ -103,10 +103,10 @@
       <div style="height:14px"></div>
       <div class="callout">
         <div class="left">
-          <h4>Local-first, autonomous operation</h4>
+          <h4>Monitoring, reporting, and autonomous operation</h4>
           <p>
-            The controller communicates locally with a radon sensor and a controllable power interface (e.g., a smart plug),
-            applies threshold + hysteresis logic, logs measurements and fan state, and generates historical visualizations accessible on your LAN.
+            The controller communicates with a radon sensor and a controllable power interface, logs measurements and fan state,
+            generates historical visualizations, and supports cloud-based Viewer tools for remote monitoring and installer visibility.
           </p>
         </div>
         <div class="badges" aria-label="highlights">
@@ -121,8 +121,8 @@
       <div class="sectionHeader">
         <h3>How it works</h3>
         <p>
-          A radon sensor reports indoor concentrations. A controller compares the readings to configurable on/off thresholds, applies hysteresis,
-          and turns the mitigation fan on or off through a controllable power interface.
+          A radon sensor reports indoor concentrations. SmRF collects, records, and analyzes the readings, providing both remote visibility
+          into mitigation performance and automated control of the radon fan.
         </p>
       </div>
 
@@ -147,31 +147,38 @@
           </ul>
           <img src="assets/Smartphone Page.png" alt="Smartphone installer page" />
         </div>
+
+        <div class="panel">
+          <h4>Remote monitoring and management</h4>
+          <ul>
+            <li>SmRF Viewer shows current radon levels, averages, fan state, and site status.</li>
+            <li>Installers can review logs and charts remotely to understand mitigation performance.</li>
+            <li>Viewer tools support future alerting, diagnostics, and service prioritization.</li>
+          </ul>
+          <img src="assets/smrf-viewer.png" alt="SmRF Viewer showing multiple radon mitigation installations" />
+        </div>
       </div>
     </section>
 
-    <section id="proof" class="section">
+    <section id="viewer" class="section">
       <div class="sectionHeader">
-        <h3>See what the system records</h3>
+        <h3>SmRF Viewer</h3>
         <p>
-          The controller logs radon readings and fan state, and generates time-series visualizations accessible on a local network.
-          This provides transparency and helps validate mitigation performance.
+          The SmRF Viewer brings together radon readings, fan state, site status, logs, charts, and reporting information.
+          It gives homeowners and installers visibility into how mitigation systems are performing over time.
         </p>
       </div>
 
       <div class="split">
         <div class="panel">
-          <h4>Historical radon chart</h4>
-          <p class="small">Example chart showing radon levels with fan ON/OFF state and thresholds.</p>
-          <img src="assets/radon-chart.png" alt="Radon chart example" />
+          <h4>Installed-site overview</h4>
+          <p class="small">The Viewer summarizes multiple SmRF installations, including current radon readings, 7-day averages, fan state, status, reason, and last report time.</p>
+          <img src="assets/smrf-viewer.png" alt="SmRF Viewer dashboard example" />
         </div>
         <div class="panel">
-          <h4>Hardware in practice</h4>
-          <p class="small">Compact embedded controller + sensor integration for residential deployment.</p>
-          <img src="assets/Raspberry Pi Zero up close.jpg" alt="Raspberry Pi Zero controller" />
-<img src="assets/Residential basement stack with fan plugged into a Shelly smartplug.jpg" alt="Shelly smart plug controlling radon fan" />
-          <div style="height:10px"></div>
-          <img src="assets/Airthings up close.jpg" alt="Radon sensor close-up" />
+          <h4>Historical radon chart</h4>
+          <p class="small">Example chart showing daily radon levels, 7-day and 30-day averages, fan ON/OFF state, and thresholds.</p>
+          <img src="assets/radon-chart.png" alt="Radon chart example" />
         </div>
       </div>
     </section>
@@ -231,9 +238,9 @@
         <div class="panel">
           <h4>What we’re building</h4>
           <ul>
-            <li>Adaptive residential radon mitigation fan control with hysteresis</li>
-            <li>Local logging + chart visualization</li>
-            <li>Autonomous operation with power-loss recovery</li>
+            <li>Remote monitoring and management of radon mitigation systems</li>
+            <li>Historical charts, Viewer tools, and weekly reports</li>
+            <li>Automated radon fan control with hysteresis</li>
           </ul>
           <p class="small">Safety note: Always follow applicable mitigation standards and verify performance with appropriate testing.</p>
         </div>
@@ -246,14 +253,14 @@
           <div style="font-weight:650;color:var(--text)"><span id="productName">Smart Radon Fan</span> <span class="muted" style="font-weight:500;font-size:12px;margin-left:8px">Patent Pending</span></div>
         </div>
         <div class="badges">
-          <span class="badge">Local-first</span>
-          <span class="badge">Threshold + hysteresis</span>
-          <span class="badge">Autonomous</span>
+          <span class="badge">Monitoring</span>
+          <span class="badge">Management</span>
+          <span class="badge">Fan control</span>
         </div>
       </div>
       <div style="height:10px"></div>
       <div class="small">
-        This site summarizes key concepts such as threshold-based control with hysteresis, local logging, and local network visualization.
+        This site summarizes key concepts such as radon mitigation monitoring, Viewer-based visibility, historical reporting, and automated fan control.
       </div>
     </footer>
   </div>
