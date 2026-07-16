@@ -1,9 +1,9 @@
 {
   "channel": "dev",
-  "version": "1.0.0-beta9.0",
-  "bundle_url": "https://www.smartradonfan.com/updates/dev/radonbox-1.0.0-beta9.0.tar.gz",
-  "sig_url": "https://www.smartradonfan.com/updates/dev/radonbox-1.0.0-beta9.0.tar.gz.minisig",
-  "notes": "Beta9.0 -- Additional Fault-Tolerant Support"
+  "version": "1.0.0-beta10.0",
+  "bundle_url": "https://www.smartradonfan.com/updates/dev/radonbox-1.0.0-beta10.0.tar.gz",
+  "sig_url": "https://www.smartradonfan.com/updates/dev/radonbox-1.0.0-beta10.0.tar.gz.minisig",
+  "notes": "Beta10.0 -- Fault tolerant support; additional graphing; Shutdown feature; Beta bug fixes"
 }
 
 
