@@ -1,9 +1,9 @@
 {
   "channel": "dev",
-  "version": "1.0.0-beta10.0",
-  "bundle_url": "https://www.smartradonfan.com/updates/dev/radonbox-1.0.0-beta10.0.tar.gz",
-  "sig_url": "https://www.smartradonfan.com/updates/dev/radonbox-1.0.0-beta10.0.tar.gz.minisig",
-  "notes": "Beta10.0 -- Fault tolerant support; additional graphing; Shutdown feature; Beta bug fixes"
+  "version": "1.0.0-beta10.1",
+  "bundle_url": "https://www.smartradonfan.com/updates/dev/radonbox-1.0.0-beta10.1.tar.gz",
+  "sig_url": "https://www.smartradonfan.com/updates/dev/radonbox-1.0.0-beta10.1.tar.gz.minisig",
+  "notes": "Beta10.1 -- Additional Shelly retries"
 }
 
 
