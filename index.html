@@ -69,32 +69,29 @@
       radon measurement, fan control, operating verification, historical reporting, and site management.
     </p>
 </div>
-<div class="split">
-<div class="panel smrf-proof-primary">
-<h4>The system</h4>
-<p class="small">
-        A Continuous Radon Monitor provides measurements, SmRF makes the control decision,
-        and the fan interface operates the mitigation fan.
-      </p>
+<div class="split smrf-proof-layout">
+<div class="panel smrf-proof-primary smrf-proof-wide">
+<h4>System</h4>
+<p class="small">A Continuous Radon Monitor (Airthings 2950) provides measurements, the SmRF Controller (Raspberry Pi) makes the control decisions, and a fan interface (fan cord plugged into a Shelly Smart Plug) provides communication between the SmRF controller and the fan.</p>
 <img alt="SmRF system with Airthings CRM, SmRF controller, and Shelly-controlled mitigation fan" src="assets/smrf-system-embodiment.png"/>
 </div>
-<div class="panel smrf-proof-primary">
-<h4>The results</h4>
+<div class="panel smrf-proof-primary smrf-proof-wide">
+<h4>Results</h4>
 <p class="small">
         Radon measurements and fan state are recorded together so mitigation response can be seen over time.
       </p>
 <img alt="SmRF radon and fan-state chart" src="assets/radon-chart.png"/>
 </div>
-<div class="panel smrf-proof-ui">
-<h4>The control</h4>
+<div class="panel smrf-proof-ui smrf-proof-ui-card">
+<h4>Control</h4>
 <p class="small">
         Managed Setup provides installer control of radon thresholds, run frequency,
         Fan Protection, Site Reporting, and installation identity.
       </p>
 <img alt="SmRF Managed Setup page showing radon thresholds, Fan Protection, and Site Reporting" src="assets/smrf-managed-setup.png"/>
 </div>
-<div class="panel smrf-proof-ui">
-<h4>The status</h4>
+<div class="panel smrf-proof-ui smrf-proof-ui-card">
+<h4>Status</h4>
 <p class="small">
         Managed Status verifies the operating state of the SmRF controller, CRM, fan-control path,
         charting, thresholds, execution frequency, and Site Reporting.
@@ -102,7 +99,7 @@
 <img alt="SmRF Managed Status page showing validated system operation" src="assets/smrf-managed-status.png"/>
 </div>
 <div class="panel" style="grid-column:1 / -1;">
-<h4>The management</h4>
+<h4>Management</h4>
 <p class="small">
         SmRF Viewer provides remote visibility into radon levels, fan state, decision reason,
         system status, reporting activity, historical charts, and multiple installations.
