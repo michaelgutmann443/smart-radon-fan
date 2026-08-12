@@ -419,3 +419,28 @@ a{color:inherit}
     width:120px;
   }
 }
+
+
+/* SmRF Today proof-card visual emphasis */
+#smrf-today .smrf-proof-primary img{
+  width:108%;
+  max-width:none;
+  margin-left:-4%;
+  margin-right:-4%;
+}
+#smrf-today .smrf-proof-ui img{
+  width:84%;
+  display:block;
+  margin-left:auto;
+  margin-right:auto;
+}
+@media (max-width:900px){
+  #smrf-today .smrf-proof-primary img{
+    width:100%;
+    margin-left:0;
+    margin-right:0;
+  }
+  #smrf-today .smrf-proof-ui img{
+    width:88%;
+  }
+}
