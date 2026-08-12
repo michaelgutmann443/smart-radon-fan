@@ -444,3 +444,95 @@ a{color:inherit}
     width:88%;
   }
 }
+
+
+/* v12 — stronger visual hierarchy in SmRF Today proof cards */
+#smrf-today .smrf-proof-primary img{
+  width:122% !important;
+  max-width:none !important;
+  margin-left:-11% !important;
+  margin-right:-11% !important;
+}
+#smrf-today .smrf-proof-ui img{
+  width:72% !important;
+  max-width:72% !important;
+  display:block !important;
+  margin-left:auto !important;
+  margin-right:auto !important;
+}
+@media (max-width:900px){
+  #smrf-today .smrf-proof-primary img{
+    width:108% !important;
+    margin-left:-4% !important;
+    margin-right:-4% !important;
+  }
+  #smrf-today .smrf-proof-ui img{
+    width:80% !important;
+    max-width:80% !important;
+  }
+}
+@media (max-width:620px){
+  #smrf-today .smrf-proof-primary img{
+    width:100% !important;
+    margin-left:0 !important;
+    margin-right:0 !important;
+  }
+  #smrf-today .smrf-proof-ui img{
+    width:88% !important;
+    max-width:88% !important;
+  }
+}
+
+
+/* v13 — SmRF Today proof-card hierarchy
+   Preserve SmRF Today/Next badge area exactly as-is. */
+#smrf-today .smrf-proof-layout{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+
+/* System and Results become full-width rows so their visuals can be large. */
+#smrf-today .smrf-proof-layout .smrf-proof-wide{
+  grid-column:1 / -1;
+}
+
+/* Remove prior oversizing that caused overlap; use the full card width instead. */
+#smrf-today .smrf-proof-wide img{
+  width:100% !important;
+  max-width:100% !important;
+  height:auto !important;
+  display:block !important;
+  margin:14px auto 0 auto !important;
+}
+
+/* Control and Status remain side-by-side and intentionally subordinate. */
+#smrf-today .smrf-proof-ui-card{
+  grid-column:auto;
+}
+#smrf-today .smrf-proof-ui-card img{
+  width:68% !important;
+  max-width:68% !important;
+  height:auto !important;
+  display:block !important;
+  margin:14px auto 0 auto !important;
+}
+
+/* Management stays full width. */
+#smrf-today .smrf-proof-layout .panel[style*="grid-column:1 / -1"]{
+  grid-column:1 / -1 !important;
+}
+
+@media (max-width:820px){
+  #smrf-today .smrf-proof-layout{
+    grid-template-columns:1fr;
+  }
+  #smrf-today .smrf-proof-layout .smrf-proof-wide,
+  #smrf-today .smrf-proof-ui-card{
+    grid-column:1;
+  }
+  #smrf-today .smrf-proof-ui-card img{
+    width:78% !important;
+    max-width:78% !important;
+  }
+}
