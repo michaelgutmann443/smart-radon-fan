@@ -1,79 +1,58 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Enable Smart Radon Fan weekly reports." />
-  <link rel="stylesheet" href="styles.css" />
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="Enable Smart Radon Fan weekly reports." name="description"/>
+<link href="styles.css" rel="stylesheet"/>
 </head>
 <body>
-  <div class="container">
-
-    <!-- NAV (copied from index.html) -->
-    <header class="nav">
-      <div class="brand">
-        <a class="logoLink" href="index.html">
-          <img class="logoimg" src="assets/srf-logo.png" alt="Smart Radon Fan logo" />
-        </a>
-        <div>
-          <h1>Residential Radon Solutions, LLC</h1>
-          <p>Adaptive control for residential radon mitigation fans</p>
-        </div>
-      </div>
-      <nav class="navlinks">
-        <a href="index.html">Home</a>
-        <a href="guide.html">Setup Guide</a>
-        <a href="whitepapers.html">White Papers</a>
-        <a href="index.html#contact">Contact</a>
-      </nav>
-    </header>
-
-    <!-- HERO CARD -->
-    <section class="section">
-      <div class="card heroMain" style="max-width:640px;margin:0 auto;">
-        <div class="kicker">Weekly Reports • Automatic • No login required</div>
-        <h2>Enable Weekly Radon Reports</h2>
-        <p>
+<div class="container">
+<!-- NAV (copied from index.html) -->
+<header class="nav">
+<div class="brand">
+<a class="logoLink" href="index.html">
+<img alt="Smart Radon Fan logo" class="logoimg" src="assets/srf-logo.png"/>
+</a>
+<div>
+<h1>Residential Radon Solutions, LLC</h1>
+<p>Adaptive control for residential radon mitigation fans</p>
+</div>
+</div>
+<nav aria-label="primary" class="navlinks"><a href="index.html">Home</a><a href="viewer.html">Viewer</a><a href="beta.html">Beta Sites</a><a class="navActive" href="subscribe.html">Reports</a><a href="whitepapers.html">White Papers</a><a href="index.html#contact">Contact</a></nav>
+</header>
+<!-- HERO CARD -->
+<section class="section">
+<div class="card heroMain" style="max-width:640px;margin:0 auto;">
+<div class="kicker">Weekly Reports • Automatic • No login required</div>
+<h2>Enable Weekly Radon Reports</h2>
+<p>
           Receive a weekly summary of your Smart Radon Fan system, including current radon levels,
           fan activity, and a 30-day chart — delivered directly to your email.
         </p>
-
-        <div style="margin-top:18px">
-
-          <!-- EMAIL -->
-          <label>Email</label>
-          <input id="email" type="email"
-            placeholder="you@example.com"
-            style="width:100%;margin-top:6px;margin-bottom:14px;padding:10px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,.03);color:var(--text);"
-          />
-
-          <!-- CLAIM CODE -->
-          <label>Claim Code</label>
-          <input id="claimCode" type="text"
-            placeholder="SRF-XXXX-XXXX-X"
-            style="width:100%;margin-top:6px;margin-bottom:18px;padding:10px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,.03);color:var(--text);"
-          />
-
-          <!-- BUTTON -->
-          <button class="btn btnPrimary" style="width:100%" onclick="subscribe()">
+<div style="margin-top:18px">
+<!-- EMAIL -->
+<label>Email</label>
+<input id="email" placeholder="you@example.com" style="width:100%;margin-top:6px;margin-bottom:14px;padding:10px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,.03);color:var(--text);" type="email"/>
+<!-- CLAIM CODE -->
+<label>Claim Code</label>
+<input id="claimCode" placeholder="SRF-XXXX-XXXX-X" style="width:100%;margin-top:6px;margin-bottom:18px;padding:10px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,.03);color:var(--text);" type="text"/>
+<!-- BUTTON -->
+<button class="btn btnPrimary" onclick="subscribe()" style="width:100%">
             Start Weekly Reports
           </button>
-
-          <!-- RESULT -->
-          <div id="result" style="margin-top:16px"></div>
-
-        </div>
-      </div>
-    </section>
-
-    <footer class="footer">
-      <div class="small">
+<!-- RESULT -->
+<div id="result" style="margin-top:16px"></div>
+</div>
+</div>
+</section>
+<footer class="footer">
+<div class="small">
         Smart Radon Fan — automated radon monitoring and reporting.
       </div>
-    </footer>
-
-  </div>
-
+</footer>
+</div>
 <script>
 async function subscribe() {
   const email = document.getElementById("email").value.trim();
@@ -126,6 +105,5 @@ async function subscribe() {
   }
 }
 </script>
-
 </body>
 </html>

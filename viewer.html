@@ -1,184 +1,164 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="SmRF Viewer provides remote visibility into Smart Radon Fan beta sites, including radon readings, fan state, alerts, logs, charts, and weekly reporting status." />
-  <title>SmRF Viewer | Smart Radon Fan</title>
-  <link rel="stylesheet" href="styles.css" />
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="SmRF Viewer provides remote visibility into Smart Radon Fan beta sites, including radon readings, fan state, alerts, logs, charts, and weekly reporting status." name="description"/>
+<title>SmRF Viewer | Smart Radon Fan</title>
+<link href="styles.css" rel="stylesheet"/>
 </head>
 <body>
-  <div class="container">
-    <header class="nav">
-      <div class="brand">
-        <a class="logoLink" href="index.html"><img class="logoimg" src="assets/srf-logo.png" alt="Smart Radon Fan logo" /></a>
-        <div>
-          <h1 id="companyName">Residential Radon Solutions, LLC</h1>
-          <p id="tagline">Radon mitigation monitoring and control</p>
-        </div>
-      </div>
-      <nav class="navlinks" aria-label="primary">
-        <a href="index.html">Home</a>
-        <a href="beta.html">Beta Sites</a>
-        <a href="subscribe.html">Reports</a>
-        <a href="guide.html">Setup Guide</a>
-        <a href="whitepapers.html">White Papers</a>
-        <a href="index.html#benefits">Benefits</a>
-        <a href="index.html#how">How it works</a>
-        <a class="navActive" href="viewer.html">Viewer</a>
-        <a href="index.html#contact">Contact</a>
-      </nav>
-    </header>
-
-    <section class="hero">
-      <div class="card heroMain">
-        <div class="kicker">Remote monitoring • Installer visibility • Site management</div>
-        <h2>SmRF Viewer — live visibility into radon mitigation performance</h2>
-        <p>
+<div class="container">
+<header class="nav">
+<div class="brand">
+<a class="logoLink" href="index.html"><img alt="Smart Radon Fan logo" class="logoimg" src="assets/srf-logo.png"/></a>
+<div>
+<h1 id="companyName">Residential Radon Solutions, LLC</h1>
+<p id="tagline">Radon mitigation monitoring and control</p>
+</div>
+</div>
+<nav aria-label="primary" class="navlinks"><a href="index.html">Home</a><a class="navActive" href="viewer.html">Viewer</a><a href="beta.html">Beta Sites</a><a href="subscribe.html">Reports</a><a href="whitepapers.html">White Papers</a><a href="index.html#contact">Contact</a></nav>
+</header>
+<section class="hero">
+<div class="card heroMain">
+<div class="kicker">Remote monitoring • Installer visibility • Site management</div>
+<h2>SmRF Viewer — live visibility into radon mitigation performance</h2>
+<p>
           The SmRF Viewer is the remote management dashboard for Smart Radon Fan beta sites. It brings together current radon readings,
           7-day averages, fan state, site status, decision reason, report timing, logs, charts, and weekly-report controls in one installer-friendly view.
         </p>
-        <div class="ctaRow">
-          <a class="btn btnPrimary" href="beta.html">Become a Beta Participant</a>
-          <a class="btn btnSecondary" href="subscribe.html">Enable Weekly Reports</a>
-          <a class="btn btnSecondary" href="index.html#contact">Contact Us</a>
-        </div>
-        <p class="small" style="margin-top:10px">Designed to help verify mitigation performance and simplify support across multiple installed sites.</p>
-      </div>
-
-      <aside class="card heroSide">
-        <img src="assets/smrf-viewer.png" alt="SmRF Viewer dashboard showing radon readings, fan status, alerts, and actions for multiple beta sites" />
-        <div class="miniGrid">
-          <div class="mini">
-            <h4>Multi-site overview</h4>
-            <p>See all reporting SmRF devices in a single table.</p>
-          </div>
-          <div class="mini">
-            <h4>Radon status</h4>
-            <p>View daily readings, 7-day averages, and threshold-based status.</p>
-          </div>
-          <div class="mini">
-            <h4>Fan state</h4>
-            <p>Confirm whether each mitigation fan is currently ON or OFF.</p>
-          </div>
-          <div class="mini">
-            <h4>Support tools</h4>
-            <p>Open site cards, logs, charts, and reporting controls.</p>
-          </div>
-        </div>
-      </aside>
-    </section>
-
-    <section class="section">
-      <div class="sectionHeader">
-        <h3>What the Viewer shows</h3>
-        <p>
+<div class="ctaRow">
+<a class="btn btnPrimary" href="beta.html">Become a Beta Participant</a>
+<a class="btn btnSecondary" href="subscribe.html">Enable Weekly Reports</a>
+<a class="btn btnSecondary" href="index.html#contact">Contact Us</a>
+</div>
+<p class="small" style="margin-top:10px">Designed to help verify mitigation performance and simplify support across multiple installed sites.</p>
+</div>
+<aside class="card heroSide">
+<div class="miniGrid">
+<div class="mini">
+<h4>Multi-site overview</h4>
+<p>See all reporting SmRF devices in a single table.</p>
+</div>
+<div class="mini">
+<h4>Radon status</h4>
+<p>View daily readings, 7-day averages, and threshold-based status.</p>
+</div>
+<div class="mini">
+<h4>Fan state</h4>
+<p>Confirm whether each mitigation fan is currently ON or OFF.</p>
+</div>
+<div class="mini">
+<h4>Support tools</h4>
+<p>Open site cards, logs, charts, and reporting controls.</p>
+</div>
+</div>
+</aside>
+</section>
+<section class="section">
+<div class="sectionHeader">
+<h3>What the Viewer shows</h3>
+<p>
           The Viewer turns individual SmRF site reports into an operational dashboard for homeowners, installers, and support staff.
           It is intended to make radon mitigation performance visible instead of hidden after installation.
         </p>
-      </div>
-
-      <div class="grid4">
-        <div class="feature">
-          <div class="icon" aria-hidden="true">📊</div>
-          <h4>Current radon readings</h4>
-          <p>Daily radon values and 7-day averages are summarized for each reporting site.</p>
-        </div>
-        <div class="feature">
-          <div class="icon" aria-hidden="true">🌀</div>
-          <h4>Fan operation</h4>
-          <p>Fan state and control reason help explain why a fan is ON, OFF, or holding state.</p>
-        </div>
-        <div class="feature">
-          <div class="icon" aria-hidden="true">⚠️</div>
-          <h4>Status and alerts</h4>
-          <p>Viewer status fields highlight normal operation, missing data, device errors, and support conditions.</p>
-        </div>
-        <div class="feature">
-          <div class="icon" aria-hidden="true">🛠️</div>
-          <h4>Installer support</h4>
-          <p>Logs and charts help installers review mitigation performance without returning immediately to the site.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="sectionHeader">
-        <h3>Dashboard example</h3>
-        <p>
+</div>
+<div class="grid4">
+<div class="feature">
+<div aria-hidden="true" class="icon">📊</div>
+<h4>Current radon readings</h4>
+<p>Daily radon values and 7-day averages are summarized for each reporting site.</p>
+</div>
+<div class="feature">
+<div aria-hidden="true" class="icon">🌀</div>
+<h4>Fan operation</h4>
+<p>Fan state and control reason help explain why a fan is ON, OFF, or holding state.</p>
+</div>
+<div class="feature">
+<div aria-hidden="true" class="icon">⚠️</div>
+<h4>Status and alerts</h4>
+<p>Viewer status fields highlight normal operation, missing data, device errors, and support conditions.</p>
+</div>
+<div class="feature">
+<div aria-hidden="true" class="icon">🛠️</div>
+<h4>Installer support</h4>
+<p>Logs and charts help installers review mitigation performance without returning immediately to the site.</p>
+</div>
+</div>
+</section>
+<section class="section">
+<div class="sectionHeader">
+<h3>Dashboard example</h3>
+<p>
           This beta Viewer example shows several active SmRF devices, their latest radon readings, 7-day averages, fan status,
           alert status, control reason, last report time, and support actions.
         </p>
-      </div>
-      <div class="panel">
-        <img src="assets/smrf-viewer.png" alt="SmRF Viewer dashboard example" />
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="sectionHeader">
-        <h3>Why this matters</h3>
-        <p>
+</div>
+<div class="panel" style="width:100%;">
+<img alt="SmRF Viewer dashboard example" src="assets/smrf-viewer.png" style="width:100%;max-width:none;display:block;margin-top:14px;"/>
+</div>
+</section>
+<section class="section">
+<div class="sectionHeader">
+<h3>Why this matters</h3>
+<p>
           A conventional mitigation system can be difficult to evaluate after installation unless someone returns to test, inspect, or troubleshoot.
           SmRF Viewer adds remote visibility, making the mitigation system easier to monitor, explain, and support over time.
         </p>
-      </div>
-
-      <div class="callout">
-        <div class="left">
-          <h4>From installation to ongoing verification</h4>
-          <p>
+</div>
+<div class="callout">
+<div class="left">
+<h4>From installation to ongoing verification</h4>
+<p>
             SmRF combines fan control with remote monitoring so each site can report measured radon levels, fan behavior, and device health.
             The Viewer is the operational layer that makes those reports useful.
           </p>
-        </div>
-        <div class="badges" aria-label="viewer highlights">
-          <span class="badge">Remote visibility</span>
-          <span class="badge">Logs and charts</span>
-          <span class="badge">Weekly reports</span>
-          <span class="badge">Installer support</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="sectionHeader">
-        <h3>Related SmRF tools</h3>
-        <p>Viewer data also supports SmRF reports and site-level charts.</p>
-      </div>
-      <div class="split">
-        <div class="panel">
-          <h4>Weekly homeowner reports</h4>
-          <p class="small">SmRF can send recurring radon reports that summarize recent readings and fan operation.</p>
-          <div class="ctaRow"><a class="btn btnSecondary" href="subscribe.html">Enable Weekly Reports</a></div>
-        </div>
-        <div class="panel">
-          <h4>Beta site program</h4>
-          <p class="small">The beta program helps validate monitoring, reporting, and automated control in real homes with existing mitigation fans.</p>
-          <div class="ctaRow"><a class="btn btnPrimary" href="beta.html">Become a Beta Participant</a></div>
-        </div>
-      </div>
-    </section>
-
-    <footer class="footer">
-      <div class="row">
-        <div>
-          <div style="font-weight:650;color:var(--text)">Smart Radon Fan <span class="muted" style="font-weight:500;font-size:12px;margin-left:8px">Patent Pending</span></div>
-        </div>
-        <div class="badges">
-          <span class="badge">Monitoring</span>
-          <span class="badge">Management</span>
-          <span class="badge">Viewer</span>
-        </div>
-      </div>
-      <div style="height:10px"></div>
-      <div class="small">
+</div>
+<div aria-label="viewer highlights" class="badges">
+<span class="badge">Remote visibility</span>
+<span class="badge">Logs and charts</span>
+<span class="badge">Weekly reports</span>
+<span class="badge">Installer support</span>
+</div>
+</div>
+</section>
+<section class="section">
+<div class="sectionHeader">
+<h3>Related SmRF tools</h3>
+<p>Viewer data also supports SmRF reports and site-level charts.</p>
+</div>
+<div class="split">
+<div class="panel">
+<h4>Weekly homeowner reports</h4>
+<p class="small">SmRF can send recurring radon reports that summarize recent readings and fan operation.</p>
+<div class="ctaRow"><a class="btn btnSecondary" href="subscribe.html">Enable Weekly Reports</a></div>
+</div>
+<div class="panel">
+<h4>Beta site program</h4>
+<p class="small">The beta program helps validate monitoring, reporting, and automated control in real homes with existing mitigation fans.</p>
+<div class="ctaRow"><a class="btn btnPrimary" href="beta.html">Become a Beta Participant</a></div>
+</div>
+</div>
+</section>
+<footer class="footer">
+<div class="row">
+<div>
+<div style="font-weight:650;color:var(--text)">Smart Radon Fan <span class="muted" style="font-weight:500;font-size:12px;margin-left:8px">Patent Pending</span></div>
+</div>
+<div class="badges">
+<span class="badge">Monitoring</span>
+<span class="badge">Management</span>
+<span class="badge">Viewer</span>
+</div>
+</div>
+<div style="height:10px"></div>
+<div class="small">
         This page summarizes the SmRF Viewer concept for beta sites, reporting, mitigation visibility, and installer support.
       </div>
-    </footer>
-  </div>
-
-  <script src="config.js"></script>
-  <script src="app.js"></script>
+</footer>
+</div>
+<script src="config.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
