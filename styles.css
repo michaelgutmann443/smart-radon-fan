@@ -340,7 +340,7 @@ a{color:inherit}
   color: var(--text);
 }
 
-/* --- Variable-rate SmRF site refresh --- */
+/* --- Variable-speed SmRF site refresh --- */
 .heroSide img[src*="smrf-production-mockup"]{
   width:100%;
   height:auto;
@@ -630,7 +630,7 @@ a{color:inherit}
 }
 
 
-/* --- v11: Viewer page focuses on installer fleet management --- */
+/* --- v11: Viewer page focuses on installer visibility --- */
 .viewerHero{
   grid-template-columns:1.08fr .92fr;
 }
