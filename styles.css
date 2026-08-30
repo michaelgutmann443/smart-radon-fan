@@ -655,3 +655,69 @@ a{color:inherit}
 @media (max-width:900px){
   .viewerHero{grid-template-columns:1fr;}
 }
+
+
+/* --- v14: one control platform, two connectivity options --- */
+.variantGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+}
+.variantCard{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  padding:22px;
+  background:
+    radial-gradient(480px 190px at 50% 0%, rgba(96,165,250,.10), transparent 72%),
+    linear-gradient(180deg, rgba(255,255,255,.065), rgba(255,255,255,.03));
+}
+.variantCard h4{
+  font-size:26px;
+  margin:0;
+}
+.variantLabel{
+  align-self:flex-start;
+  padding:6px 10px;
+  border-radius:999px;
+  border:1px solid rgba(96,165,250,.30);
+  background:rgba(96,165,250,.09);
+  color:#bfdbfe;
+  font-size:12px;
+  font-weight:700;
+}
+.variantLead{
+  margin:0;
+  color:var(--muted);
+  font-weight:650;
+}
+.variantCard img{
+  width:100%;
+  aspect-ratio:4 / 3;
+  object-fit:contain;
+  border-radius:16px;
+  background:#f7f8fa;
+  padding:8px;
+  border:1px solid rgba(96,165,250,.22);
+}
+.variantCard ul{
+  margin:2px 0 8px;
+  padding-left:20px;
+  color:var(--muted);
+}
+.variantCard li{margin:6px 0;}
+.variantCard strong{color:var(--text);}
+.connectivityBottomLine{
+  margin-top:16px;
+  padding:18px 20px;
+  border:1px solid rgba(94,234,212,.24);
+  border-radius:16px;
+  background:rgba(94,234,212,.055);
+  text-align:center;
+  color:var(--muted);
+  font-size:17px;
+}
+.connectivityBottomLine strong{color:var(--text);}
+@media (max-width:900px){
+  .variantGrid{grid-template-columns:1fr;}
+}
