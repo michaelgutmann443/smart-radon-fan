@@ -9,6 +9,13 @@
   setText('contactPhone', cfg.contactPhone || '503 869 9507');
   setText('contactEmail', cfg.contactEmail || 'info@smartradonfan.com');
 
+  document.querySelectorAll('[data-viewer-url]').forEach((link) => {
+    link.href = cfg.installerViewerUrl || 'https://api.smartradonfan.com/installer';
+  });
+  document.querySelectorAll('[data-viewer-signup-url]').forEach((link) => {
+    link.href = cfg.installerSignupUrl || 'https://api.smartradonfan.com/installer/signup';
+  });
+
   // Update title
   document.title = `${cfg.productName || 'Smart Radon Fan'} — ${cfg.companyName || 'Residential Radon Solutions, LLC'}`;
 })();

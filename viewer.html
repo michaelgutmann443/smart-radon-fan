@@ -1,8 +1,85 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1" name="viewport"/><meta content="SmRF Viewer is the optional connected layer for SmRF VS-WiFi, providing installer dashboards, radon history, fan output, alerts, reports, logs, and charts." name="description"/><title>SmRF Viewer | Smart Radon Fan</title><link href="styles.css" rel="stylesheet"/></head>
-<body><div class="container"><header class="nav"><div class="brand"><a class="logoLink" href="index.html"><img alt="Smart Radon Fan logo" class="logoimg" src="assets/srf-logo.png"/></a><div><h1 id="companyName">Residential Radon Solutions, LLC</h1><p id="tagline">Automated variable-speed radon mitigation</p></div></div><nav aria-label="primary" class="navlinks"><a href="index.html">Home</a><a class="navActive" href="viewer.html">Viewer</a><a href="field-results.html">Field Results</a><a href="whitepapers.html">White Papers</a><a href="index.html#contact">Contact</a></nav></header>
-<section class="hero viewerHero"><div class="card heroMain"><div class="kicker">VS-WiFi option • Installer dashboard • Remote verification</div><h2>Viewer is the optional connected layer for SmRF VS-WiFi</h2><p>The radon-control loop remains local. When remote visibility is useful, a VS-WiFi installation can report to the SmRF Viewer for one organized operational view of the installed base.</p><p>The Viewer brings together the measured radon result and commanded mitigation: current readings, averages, variable fan speed, status, decision reason, report timing, logs, charts, and alerts.</p><div class="ctaRow"><a class="btn btnPrimary" href="index.html#contact">Installer &amp; Industry Contact</a><a class="btn btnSecondary" href="index.html#connectivity">Compare WiFi and BLE</a></div></div><aside class="card heroSide viewerAccountCard"><div class="architectureEyebrow">SmRF VS-WiFi</div><h3>One account. The installations you manage.</h3><p>Each VS-WiFi SmRF can be claimed to the appropriate installer account. The Viewer then becomes the installer's remote dashboard for that installed base.</p><div class="miniGrid"><div class="mini"><h4>Radon result</h4><p>Current values and averages show mitigation performance.</p></div><div class="mini"><h4>Fan percentage</h4><p>Variable-speed systems report commanded fan output.</p></div><div class="mini"><h4>Exceptions &amp; alerts</h4><p>Sites needing attention can be identified quickly.</p></div><div class="mini"><h4>History &amp; service</h4><p>Cards, logs, charts, and reports support remote diagnosis.</p></div></div></aside></section>
-<section class="section"><div class="sectionHeader"><h3>Manage customer sites remotely</h3><p>A unique installer database keeps claimed SmRF installations organized and can surface intelligent alerts when a site needs attention.</p></div><div class="grid4"><div class="feature"><div class="icon">🏠</div><h4>Claim installations</h4><p>Add individual VS-WiFi SmRF systems to the installer account.</p></div><div class="feature"><div class="icon">📊</div><h4>Compare sites</h4><p>See radon, averages, fan output, system state, and last-report timing together.</p></div><div class="feature"><div class="icon">⚠️</div><h4>Surface exceptions</h4><p>Status and alert information helps identify sites that may need attention.</p></div><div class="feature"><div class="icon">🛠️</div><h4>Support remotely</h4><p>Logs, charts, and reports can inform service before a site visit.</p></div></div></section>
-<section class="section"><div class="sectionHeader"><h3>Viewer example</h3><p>The current Viewer includes fixed-speed field systems and the variable-speed development system, which reports fan percentage rather than simply ON or OFF.</p></div><div class="panel" style="width:100%;"><img alt="SmRF Viewer showing multiple installed sites and a variable-speed SmRF installation" src="assets/smrf-viewer-variable-speed.png" style="width:100%;max-width:none;display:block;margin-top:0;"/></div></section>
-<section class="section"><div class="sectionHeader"><h3>Connected when useful. Local where it matters.</h3><p>Viewer is not part of the control loop. SmRF VS-WiFi continues controlling the fan locally if cloud connectivity is unavailable. Installations that do not need permanent WiFi can instead use SmRF VS-BLE.</p></div><div class="callout"><div class="left"><h4>Control locally. Verify remotely — when desired.</h4><p>SmRF VS-WiFi adds remote visibility without making the cloud a dependency for radon control.</p></div><div class="badges"><span class="badge">Radon result</span><span class="badge">Fan %</span><span class="badge">Status &amp; alerts</span><span class="badge">Logs &amp; charts</span><span class="badge">Reports</span></div></div></section>
-<footer class="footer"><div class="row"><div><div style="font-weight:650;color:var(--text)">SmRF — Smart Radon Fan <span class="muted" style="font-weight:500;font-size:12px;margin-left:8px">Patent Pending</span></div></div><div class="badges"><span class="badge">VS-WiFi option</span><span class="badge">Installer dashboard</span><span class="badge">Remote verification</span></div></div><div style="height:10px"></div><div class="small">SmRF Viewer provides optional remote visibility into measured radon, fan operation, and system health for VS-WiFi installations.</div></footer></div><script src="config.js"></script><script src="app.js"></script></body></html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="Sign in to SmRF Viewer or create an installer account to claim VS-WiFi systems, review fleet performance, and manage issues." name="description"/>
+<title>SmRF Viewer | Smart Radon Fan</title>
+<link href="styles.css" rel="stylesheet"/>
+</head>
+<body>
+<div class="container">
+<header class="nav">
+<div class="brand">
+<a class="logoLink" href="index.html"><img alt="Smart Radon Fan logo" class="logoimg" src="assets/srf-logo.png"/></a>
+<div><h1 id="companyName">Residential Radon Solutions, LLC</h1><p id="tagline">Automated variable-speed radon mitigation</p></div>
+</div>
+<nav aria-label="primary" class="navlinks">
+<a href="index.html">Home</a>
+<a class="navActive" href="viewer.html">Viewer</a>
+<a href="field-results.html">Field Results</a>
+<a href="whitepapers.html">White Papers</a>
+<a href="index.html#contact">Contact</a>
+<a class="navLogin" data-viewer-url href="https://api.smartradonfan.com/installer">Installer Login</a>
+</nav>
+</header>
+
+<section class="hero viewerHero">
+<div class="card heroMain">
+<div class="kicker">Installer account • Fleet dashboard • Claim Code</div>
+<h2>Your installed SmRF systems, in one Viewer</h2>
+<p>Sign in to review the VS-WiFi systems your organization manages. The Viewer brings current radon, 7-day and 30-day averages, average fan utilization, report timing, system status, and outstanding issues into one operational fleet view.</p>
+<p>SmRF control remains local at every site. The Viewer adds remote visibility so installers can focus attention where it is needed.</p>
+<div class="ctaRow">
+<a class="btn btnPrimary" data-viewer-url href="https://api.smartradonfan.com/installer">Open Installer Viewer</a>
+<a class="btn btnSecondary" data-viewer-signup-url href="https://api.smartradonfan.com/installer/signup">Create Installer Account</a>
+</div>
+<p class="small viewerAccessNote">Installer accounts are for organizations that install or manage SmRF VS-WiFi systems.</p>
+</div>
+<aside class="card heroSide viewerAccountCard">
+<div class="architectureEyebrow">SmRF Viewer workflow</div>
+<ol class="viewerSteps">
+<li><span>1</span><div><h3>Create an account</h3><p>Set up the installer organization and account owner.</p></div></li>
+<li><span>2</span><div><h3>Add each SmRF</h3><p>Enter the Claim Code shown on that SmRF’s Managed Setup page.</p></div></li>
+<li><span>3</span><div><h3>Review the fleet</h3><p>Filter installations, inspect trends, and address outstanding issues.</p></div></li>
+</ol>
+</aside>
+</section>
+
+<section class="section">
+<div class="sectionHeader"><h3>What installers can do</h3><p>The Viewer is organized for periodic fleet review—not high-volume emergency email alerting.</p></div>
+<div class="grid4">
+<div class="feature"><div aria-hidden="true" class="icon">🏠</div><h4>Claim installations</h4><p>Add a reporting SmRF with its site-specific Claim Code. Each system belongs to the appropriate installer organization.</p></div>
+<div class="feature"><div aria-hidden="true" class="icon">📊</div><h4>Compare performance</h4><p>Review daily radon, 7-day and 30-day averages, fan utilization, status, and last-report timing.</p></div>
+<div class="feature"><div aria-hidden="true" class="icon">⚠️</div><h4>Review issues</h4><p>Use fleet filters and the outstanding-issues list to find systems that deserve follow-up.</p></div>
+<div class="feature"><div aria-hidden="true" class="icon">🛠️</div><h4>Inspect a site</h4><p>Open an individual SmRF for its radon-and-fan history and the context needed for remote service.</p></div>
+</div>
+</section>
+
+<section class="section">
+<div class="sectionHeader"><h3>Claiming a SmRF</h3><p>The Claim Code proves that the installer has access to the physical SmRF or its local Managed Setup page.</p></div>
+<div class="claimFlow">
+<div class="panel claimStep"><div class="stepNumber">1</div><h4>Open Managed Setup</h4><p class="small">At the SmRF site—or through authorized remote access—open the device’s Managed Setup page and locate its Claim Code.</p></div>
+<div class="panel claimStep"><div class="stepNumber">2</div><h4>Select Add SmRF</h4><p class="small">Sign in to the Viewer, choose <strong>Add SmRF</strong>, and enter the Claim Code exactly as shown.</p></div>
+<div class="panel claimStep"><div class="stepNumber">3</div><h4>Confirm the fleet card</h4><p class="small">The claimed system appears in the organization’s fleet and can be opened for detailed review.</p></div>
+</div>
+</section>
+
+<section class="section">
+<div class="sectionHeader"><h3>Fleet and device views</h3><p>The fleet dashboard supports fast review; the device page provides the trend detail behind each installation.</p></div>
+<div class="panel viewerScreenshot"><img alt="SmRF Viewer showing multiple installed sites and a variable-speed SmRF installation" src="assets/smrf-viewer-variable-speed.png"/></div>
+</section>
+
+<section class="section">
+<div class="sectionHeader"><h3>Connected when useful. Local where it matters.</h3><p>Viewer is not part of the control loop. SmRF VS-WiFi continues controlling the fan locally if cloud connectivity is unavailable. Installations that do not need permanent WiFi can instead use SmRF VS-BLE.</p></div>
+<div class="callout">
+<div class="left"><h4>Ready to review your installed systems?</h4><p>Open the secure Viewer, sign in to your installer account, and continue from your fleet dashboard.</p></div>
+<div class="ctaRow"><a class="btn btnPrimary" data-viewer-url href="https://api.smartradonfan.com/installer">Open Installer Viewer</a></div>
+</div>
+</section>
+
+<footer class="footer"><div class="row"><div><div style="font-weight:650;color:var(--text)">SmRF — Smart Radon Fan <span class="muted" style="font-weight:500;font-size:12px;margin-left:8px">Patent Pending</span></div></div><div class="badges"><span class="badge">Installer fleet</span><span class="badge">Claim Code</span><span class="badge">In-Viewer issues</span></div></div><div style="height:10px"></div><div class="small">SmRF Viewer provides optional remote visibility into measured radon, fan operation, and system health for VS-WiFi installations.</div></footer>
+</div>
+<script src="config.js"></script><script src="app.js"></script>
+</body>
+</html>

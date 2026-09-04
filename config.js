@@ -6,5 +6,7 @@ window.SITE_CONFIG = {
   contactName: "Michael J. Gutmann",
   contactAddress: "1125 NE 3rd Avenue, Hillsboro, OR 97124",
   contactPhone: "503 869 9507",
-  contactEmail: "info@smartradonfan.com"
+  contactEmail: "info@smartradonfan.com",
+  installerViewerUrl: "https://api.smartradonfan.com/installer",
+  installerSignupUrl: "https://api.smartradonfan.com/installer/signup"
 };

@@ -20,6 +20,7 @@
 <a href="field-results.html">Field Results</a>
 <a href="whitepapers.html">White Papers</a>
 <a href="index.html#contact">Contact</a>
+<a class="navLogin" data-viewer-url href="https://api.smartradonfan.com/installer">Installer Login</a>
 </nav>
 </header>
 
@@ -59,7 +60,7 @@
 <h4>SmRF VS-WiFi</h4>
 <p class="variantLead">Variable-speed control + optional Viewer</p>
 <img alt="SmRF VS-WiFi production concept with Raspberry Pi, WiFi, DAC, AC input, and 18/2 control output" src="assets/smrf-production-mockup.png"/>
-<ul><li><strong>Remote verification</strong></li><li><strong>Installer dashboard</strong></li><li><strong>Alerts + reports</strong></li></ul>
+<ul><li><strong>Remote verification</strong></li><li><strong>Installer fleet dashboard</strong></li><li><strong>In-Viewer issues + trends</strong></li></ul>
 <a class="btn btnSecondary" href="viewer.html">See the Viewer</a>
 </div>
 <div class="panel variantCard">
@@ -112,14 +113,14 @@
 <section class="section" id="viewer">
 <div class="sectionHeader">
 <h3>SmRF Viewer — optional remote verification for VS-WiFi</h3>
-<p>SmRF VS-WiFi can add the Viewer as a connected layer. An installer account provides one organized view of the SmRF installations it manages, including radon history, fan output, alerts, reports, and service information.</p>
+<p>SmRF VS-WiFi can add the Viewer as a connected layer. An installer account provides one organized view of the SmRF installations it manages, including radon history, fan output, report timing, outstanding issues, and service information.</p>
 </div>
 <div class="split">
 <div class="panel" style="grid-column:1 / -1;">
 <h4>One installer account. Every claimed VS-WiFi installation.</h4>
-<p class="small">The Viewer can organize current radon values and averages, variable fan speed, system status, decision reason, last report, cards, logs, charts, alerts, and reports. A site-specific claim process associates each SmRF with the appropriate installer account.</p>
+<p class="small">The Viewer organizes daily radon, 7-day and 30-day averages, average fan utilization, system status, last-report timing, fleet filters, outstanding issues, and device-level history. A site-specific Claim Code associates each SmRF with the appropriate installer account.</p>
 <img alt="SmRF Viewer showing multiple installations including a variable-speed SmRF" src="assets/smrf-viewer-variable-speed.png" style="width:100%;max-width:none;display:block;margin-top:14px;"/>
-<div class="ctaRow"><a class="btn btnPrimary" href="viewer.html">Explore Viewer Features</a></div>
+<div class="ctaRow"><a class="btn btnPrimary" data-viewer-url href="https://api.smartradonfan.com/installer">Open Installer Viewer</a><a class="btn btnSecondary" href="viewer.html">How the Viewer Works</a></div>
 </div>
 </div>
 </section>
@@ -142,7 +143,7 @@
 </div>
 <div class="split">
 <div class="panel"><h4 id="contactName">Michael J. Gutmann</h4><p style="margin:0;color:var(--muted)"><span id="contactPhone">503 869 9507</span></p><div style="height:10px"></div><p class="small"><a class="link" href="mailto:info@smartradonfan.com"><span id="contactEmail">info@smartradonfan.com</span></a></p></div>
-<div class="panel"><h4>SmRF platform</h4><ul><li>CRM-based closed-loop radon control</li><li>Target-based variable-speed fan algorithms</li><li>Hardwired 0–10 V fan command over 18/2 cable</li><li><strong>VS-WiFi:</strong> optional Viewer, alerts, reports, remote verification</li><li><strong>VS-BLE:</strong> local smartphone setup/status, no permanent home WiFi required</li></ul><p class="small">Patent pending. Development and field-validation platform; final production configuration and certification are in progress.</p></div>
+<div class="panel"><h4>SmRF platform</h4><ul><li>CRM-based closed-loop radon control</li><li>Target-based variable-speed fan algorithms</li><li>Hardwired 0–10 V fan command over 18/2 cable</li><li><strong>VS-WiFi:</strong> optional Viewer, fleet trends, in-Viewer issues, remote verification</li><li><strong>VS-BLE:</strong> local smartphone setup/status, no permanent home WiFi required</li></ul><p class="small">Patent pending. Development and field-validation platform; final production configuration and certification are in progress.</p></div>
 </div>
 </section>
 

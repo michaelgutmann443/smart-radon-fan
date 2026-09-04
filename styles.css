@@ -41,6 +41,16 @@ a{color:inherit}
 .navlinks{display:flex;gap:18px;align-items:center;flex-wrap:nowrap}
 .navlinks a{opacity:.9;text-decoration:none;font-size:13px;color:var(--muted)}
 .navlinks a:hover{color:var(--text)}
+.navlinks .navLogin{
+  padding:8px 11px;
+  border:1px solid rgba(94,234,212,.35);
+  border-radius:12px;
+  background:rgba(94,234,212,.08);
+  color:var(--accent);
+  font-weight:700;
+  opacity:1;
+}
+.navlinks .navLogin:hover{background:rgba(94,234,212,.14);color:#ccfbf1}
 
 .hero{
   padding:28px 0 12px;
@@ -655,6 +665,20 @@ a{color:inherit}
 @media (max-width:900px){
   .viewerHero{grid-template-columns:1fr;}
 }
+
+/* --- v17: website entry point for the installer Viewer --- */
+.viewerAccessNote{margin-top:14px!important;max-width:none!important}
+.viewerSteps{list-style:none;margin:4px 0 0;padding:0;display:grid;gap:12px}
+.viewerSteps li{display:grid;grid-template-columns:38px 1fr;gap:12px;align-items:start;padding:13px;border:1px solid var(--border);border-radius:16px;background:rgba(0,0,0,.15)}
+.viewerSteps li > span,.stepNumber{width:34px;height:34px;display:grid;place-items:center;border-radius:12px;background:rgba(94,234,212,.12);border:1px solid rgba(94,234,212,.28);color:var(--accent);font-weight:800}
+.viewerSteps h3{margin:1px 0 5px;font-size:15px}
+.viewerSteps p{margin:0;color:var(--muted);font-size:13px;line-height:1.45}
+.claimFlow{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.claimStep{display:grid;align-content:start;gap:10px}
+.claimStep h4,.claimStep p{margin:0}
+.viewerScreenshot{padding:14px}
+.viewerScreenshot img{width:100%;max-width:none;display:block;margin:0}
+@media (max-width:900px){.claimFlow{grid-template-columns:1fr}}
 
 
 /* --- v14: one control platform, two connectivity options --- */
