@@ -41,6 +41,19 @@ a{color:inherit}
 .navlinks{display:flex;gap:18px;align-items:center;flex-wrap:nowrap}
 .navlinks a{opacity:.9;text-decoration:none;font-size:13px;color:var(--muted)}
 .navlinks a:hover{color:var(--text)}
+.navlinks a.navLogin{
+  padding:8px 11px;
+  border:1px solid rgba(96,165,250,.35);
+  border-radius:999px;
+  background:rgba(96,165,250,.08);
+  color:var(--text);
+  opacity:1;
+  white-space:nowrap;
+}
+.navlinks a.navLogin:hover{
+  border-color:rgba(96,165,250,.65);
+  background:rgba(96,165,250,.14);
+}
 
 .hero{
   padding:28px 0 12px;
