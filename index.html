@@ -3,151 +3,98 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
-<meta content="SmRF brings closed-loop, variable-speed control to radon mitigation with two connectivity options: SmRF VS-WiFi with optional Viewer and SmRF VS-BLE with local smartphone setup and status." name="description"/>
-<title>SmRF | Smart Radon Fan</title>
-<link href="styles.css" rel="stylesheet"/>
+<meta content="The SmRF product path brings closed-loop residential radon mitigation from the autonomous SmRF Mini to SmRF WiFi and the remote SmRF Viewer." name="description"/>
+<title>SmRF Mini, SmRF WiFi and Viewer | Smart Radon Fan</title>
+<link href="styles.css?v=25" rel="stylesheet"/>
 </head>
-<body>
-<div class="container">
-<header class="nav">
-<div class="brand">
-<a class="logoLink" href="index.html"><img alt="Smart Radon Fan logo" class="logoimg" src="assets/srf-logo.png"/></a>
-<div><h1 id="companyName">Residential Radon Solutions, LLC</h1><p id="tagline">Automated variable-speed radon mitigation</p></div>
-</div>
-<nav aria-label="primary" class="navlinks">
-<a class="navActive" href="index.html">Home</a>
-<a href="viewer.html">Viewer</a>
-<a href="field-results.html">Field Results</a>
-<a href="whitepapers.html">White Papers</a>
-<a href="index.html#contact">Contact</a>
-<a class="navLogin" href="https://api.smartradonfan.com/installer">SmRF Viewer Login</a>
-</nav>
+<body class="miniHome">
+<div class="container miniContainer">
+<header class="nav miniNav">
+  <div class="brand miniBrand"><a class="miniWordmark" href="index.html" aria-label="Smart Radon Fan home"><strong>SmRF</strong><span>Smart Radon Fan</span></a></div>
+  <nav aria-label="primary" class="navlinks miniNavlinks">
+    <a href="#how-it-works">How It Works</a><a href="#smrf-mini">SmRF Mini</a><a href="#product-path">Product Path</a><a href="field-results.html">Field Results</a><a href="whitepapers.html">White Papers</a><a href="#contact">Contact</a><a class="navLogin miniLogin" href="https://api.smartradonfan.com/installer">SmRF Viewer Login</a>
+  </nav>
 </header>
 
-<section class="hero heroArchitectureBalanced" id="how">
-<div class="card heroMain">
-<div class="kicker">Measure • Adjust • Verify</div>
-<h2>Smart Radon Fan (<span id="productName">SmRF</span>) brings closed-loop control to radon mitigation</h2>
-<p>A continuous radon monitor measures the result that matters. SmRF compares that measurement with a selected radon target and adjusts a compatible variable-speed fan. The cycle repeats as new radon measurements arrive.</p>
-<p>The control loop remains local. Connectivity is a choice: SmRF VS-WiFi can add remote Viewer verification, while SmRF VS-BLE uses a nearby smartphone for local setup and status without requiring permanent home WiFi.</p>
-<div class="ctaRow">
-<a class="btn btnPrimary" href="#connectivity">See the Two SmRF Options</a>
-<a class="btn btnSecondary" href="field-results.html">See Field Results</a>
-<a class="btn btnSecondary" href="#contact">Industry &amp; Research Contact</a>
-</div>
-<p class="small" style="margin-top:10px"><strong>Set the radon target. SmRF adjusts the fan locally.</strong></p>
-</div>
-<aside class="card heroSide architectureCard">
-<div class="architectureEyebrow">SmRF system architecture</div>
-<figure class="archFigure"><img alt="SmRF architecture showing CRM feedback, local controller, fan control, and optional Viewer" src="assets/smrf-system-architecture.png"/><figcaption>The core control system is local. The dashed Viewer path represents the optional connected layer available with SmRF VS-WiFi.</figcaption></figure>
-<div class="miniGrid">
-<div class="mini"><h4>CRM feedback</h4><p>Continuous radon measurement drives the control decision.</p></div>
-<div class="mini"><h4>Local controller</h4><p>SmRF computes the fan command without depending on cloud connectivity.</p></div>
-<div class="mini"><h4>Variable fan speed</h4><p>A hardwired 0–10 V signal commands a compatible EC radon fan.</p></div>
-<div class="mini"><h4>Optional connectivity</h4><p>Choose WiFi + Viewer or BLE local smartphone access.</p></div>
-</div>
-</aside>
+<main>
+<section class="miniHero" id="smrf-mini">
+  <div class="miniHeroCopy">
+    <div class="miniEyebrow">Introducing SmRF Mini</div>
+    <h1>The missing control loop in residential radon mitigation.</h1>
+    <p class="miniLead">SmRF Mini continuously measures radon and automatically adjusts a Fantech EC variable-speed fan to maintain the selected target.</p>
+    <div class="miniProofs" aria-label="SmRF Mini key features">
+      <div><span class="miniIcon miniIconSensor" aria-hidden="true">⌁</span><strong>Integrated continuous<br/>radon monitor</strong></div>
+      <div><span class="miniIcon" aria-hidden="true">◉</span><strong><span class="miniProofLabelLine">Automatic 0–10 V</span><br/>fan control</strong></div>
+      <div><span class="miniIcon" aria-hidden="true">✓</span><strong>No WiFi, BLE<br/>or app required</strong></div>
+    </div>
+    <div class="ctaRow miniCtas"><a class="btn miniPrimary" href="#how-it-works">See How SmRF Mini Works</a><a class="miniTextLink" href="field-results.html">View field results <span aria-hidden="true">→</span></a></div>
+  </div>
+  <div class="miniProductWrap"><img class="miniProduct" src="assets/smrf-mini-controller.png" alt="SmRF Mini local variable-speed radon controller with integrated display, target controls, and AUTO/SAFE switch"/></div>
 </section>
 
-<section class="section" id="connectivity">
-<div class="sectionHeader">
-<h3>SmRF: two connectivity options</h3>
-<p>Same closed-loop radon control. Different connectivity. Both versions use CRM feedback, a local controller, a hardwired 0–10 V fan command, and a compatible variable-speed EC radon fan.</p>
-</div>
-<div class="variantGrid">
-<div class="panel variantCard">
-<div class="variantLabel">Connected option</div>
-<h4>SmRF VS-WiFi</h4>
-<p class="variantLead">Variable-speed control + optional Viewer</p>
-<img alt="SmRF VS-WiFi production concept with Raspberry Pi controller, direct-connect Wi-Fi module, integrated radon sensor, DAC, external 5 V power, and 18/2 fan-control output" src="assets/smrf-production-mockup.png"/>
-<ul><li><strong>Remote verification</strong></li><li><strong>Monitoring dashboard</strong></li><li><strong>Alerts + reports</strong></li></ul>
-<a class="btn btnSecondary" href="viewer.html">See the Viewer</a>
-</div>
-<div class="panel variantCard">
-<div class="variantLabel">Local option</div>
-<h4>SmRF VS-BLE</h4>
-<p class="variantLead">Variable-speed control + smartphone UI</p>
-<img alt="SmRF VS-BLE production concept with BLE controller, integrated radon sensor, local history storage, external 5 V power, and 18/2 fan-control output" src="assets/smrf-vs-ble-mockup.png"/>
-<ul><li><strong>Local setup + status</strong></li><li><strong>No home WiFi required</strong></li><li><strong>Smartphone interface</strong></li></ul>
-</div>
-</div>
-<div class="connectivityBottomLine"><strong>Same control platform.</strong> Choose the connectivity that fits the installation.</div>
+<section class="loopSection" id="how-it-works">
+  <div class="miniSectionIntro"><div class="miniEyebrow">Closed-loop mitigation</div><h2>Measure. Adjust. Verify. Repeat.</h2><p>A complete local control loop—not merely an always-on fan.</p></div>
+  <div class="loopGrid">
+    <div class="loopStep"><span>1</span><h3>Measure radon</h3><p>The integrated CRM continuously measures the indoor radon level.</p></div><div class="loopArrow" aria-hidden="true">→</div>
+    <div class="loopStep"><span>2</span><h3>Compare with target</h3><p>The local controller compares the latest measurement with the selected target.</p></div><div class="loopArrow" aria-hidden="true">→</div>
+    <div class="loopStep"><span>3</span><h3>Adjust fan speed</h3><p>A hardwired 0–10 V signal commands the compatible Fantech EC fan.</p></div><div class="loopArrow" aria-hidden="true">→</div>
+    <div class="loopStep"><span>4</span><h3>Verify the result</h3><p>New readings show the response, and the control cycle continues.</p></div>
+  </div>
 </section>
 
-<section class="section" id="benefits">
-<div class="sectionHeader">
-<h3>Why variable-speed control?</h3>
-<p>Early SmRF work demonstrated that radon responds to commanded fan operation. Variable-speed fans take the next logical step: instead of choosing only ON or OFF, SmRF can regulate the amount of mitigation toward a specified radon level.</p>
-</div>
-<div class="grid4">
-<div class="feature"><div aria-hidden="true" class="icon">🎯</div><h4>Target-based control</h4><p>The installer selects the desired radon level; SmRF adjusts fan output toward that target.</p></div>
-<div class="feature"><div aria-hidden="true" class="icon">🌀</div><h4>Adaptive fan speed</h4><p>Mitigation can increase or decrease as radon and building conditions change.</p></div>
-<div class="feature"><div aria-hidden="true" class="icon">🔌</div><h4>Simple hardwired command</h4><p>The fan receives a local 0–10 V command over ordinary 18/2 cable.</p></div>
-<div class="feature"><div aria-hidden="true" class="icon">✓</div><h4>Local autonomy</h4><p>The radon-control loop continues locally regardless of the connectivity option selected.</p></div>
-</div>
+<section class="miniSection productSection">
+  <div class="miniSectionIntro"><div class="miniEyebrow">Purpose-built and autonomous</div><h2>The first integrated CRM-to-fan control loop for residential radon mitigation.</h2><p>Reliable low-cost radon sensing and EC variable-speed fans now make continuous, target-based mitigation practical.</p></div>
+  <div class="miniFeatureGrid">
+    <article><div class="lineIcon">⌁</div><h3>Integrated CRM</h3><p>Radon measurement is part of the controller, eliminating dependence on a separate consumer monitor.</p></article>
+    <article><div class="lineIcon">◉</div><h3>Variable-speed EC fan</h3><p>SmRF Mini regulates fan output instead of leaving the fan at one fixed operating point.</p></article>
+    <article><div class="lineIcon">▣</div><h3>Local display</h3><p>See current radon, 30-day average, fan speed, fan utilization, target, and operating status.</p></article>
+    <article><div class="lineIcon">✓</div><h3>Local autonomous control</h3><p>The entire measurement and control process operates inside the home without internet service.</p></article>
+  </div>
 </section>
 
-<section class="section" id="field-results">
-<div class="sectionHeader">
-<h3>How we got here: field evidence from fixed-speed control</h3>
-<p>SmRF began by automating conventional fixed-speed radon fans. That prototype work was the stepping stone to variable-speed control and, importantly, produced real-world data showing the relationship between commanded fan operation and measured indoor radon.</p>
-</div>
-<div class="split splitChartStack">
-<div class="panel panelChartLarge">
-<h4>Radon response to fan state</h4>
-<img alt="SmRF field chart showing radon response to automated fan ON and OFF states" class="chartLarge" src="assets/radon-chart.png"/>
-</div>
-<div class="panel">
-<h4>What the fixed-speed prototype established</h4>
-<ul>
-<li><strong>Radon measurement can drive mitigation decisions.</strong></li>
-<li><strong>Indoor radon responds materially to changes in fan operation.</strong></li>
-<li><strong>Local automation, logging, reporting, and fault handling can operate as one platform.</strong></li>
-<li><strong>Variable-speed control is the more complete solution:</strong> regulate toward a selected radon level rather than alternate between zero and full output.</li>
-</ul>
-<div class="ctaRow"><a class="btn btnSecondary" href="field-results.html">More on Field Results</a></div>
-</div>
-</div>
+<section class="miniSection evidenceSection" id="field-results">
+  <div class="evidenceCopy">
+    <div class="miniEyebrow">Measured in real homes</div><h2>Built from field evidence—not theory alone.</h2>
+    <p>Existing SmRF prototypes have generated the operating data needed to develop and validate the variable-speed control algorithms that SmRF Mini will use.</p>
+    <ul><li>Radon response measured against commanded fan output</li><li>Target-based stepped speed changes tested in occupied homes</li><li>Daily, 7-day, and 30-day performance tracked over time</li></ul>
+    <a class="btn miniSecondary" href="field-results.html">Explore Field Results</a>
+  </div>
+  <figure class="evidenceChart"><img src="assets/smrf-vs-field-chart-september-2026.png" alt="SmRF variable-speed field chart showing radon measurements and automatic fan-rate adjustments"/><figcaption>Example field operation: measured radon and corresponding automatic fan-rate changes.</figcaption></figure>
 </section>
 
-<section class="section" id="viewer">
-<div class="sectionHeader">
-<h3>SmRF Viewer — optional remote verification for VS-WiFi</h3>
-<p>SmRF VS-WiFi can add the Viewer as a connected layer. An authorized monitoring account provides one organized view of the SmRF installations it manages, including radon history, fan output, alerts, reports, and service information.</p>
-</div>
-<div class="split">
-<div class="panel" style="grid-column:1 / -1;">
-<h4>One Viewer account. Every claimed VS-WiFi installation.</h4>
-<p class="small">The Viewer can organize current radon values and averages, variable fan speed, system status, decision reason, last report, cards, logs, charts, alerts, and reports. A site-specific claim process associates each SmRF with the appropriate authorized monitoring account.</p>
-<img alt="SmRF Viewer showing multiple installations including a variable-speed SmRF" src="assets/smrf-viewer-variable-speed.png" style="width:100%;max-width:none;display:block;margin-top:14px;"/>
-<div class="ctaRow"><a class="btn btnPrimary" href="viewer.html">Explore Viewer Features</a><a class="btn btnSecondary" href="https://api.smartradonfan.com/installer">SmRF Viewer Login</a></div>
-</div>
-</div>
+<section class="miniSection futureSection" id="product-path">
+  <div class="miniSectionIntro"><div class="miniEyebrow">One control platform, a clear product path</div><h2>From autonomous control to connected fleet visibility.</h2><p>SmRF Mini delivers the essential CRM-to-fan control loop in the simplest product. SmRF WiFi adds connectivity while preserving local operation. SmRF Viewer provides the remote monitoring layer for connected installations.</p></div>
+  <div class="productPathFlow" aria-label="SmRF product path"><span>SmRF Mini</span><b aria-hidden="true">→</b><span>SmRF WiFi</span><b aria-hidden="true">→</b><span>SmRF Viewer</span></div>
+  <div class="futureGrid productPathGrid">
+    <article class="futureCard flagship">
+      <div class="futureLabel">Focused first product</div><h3>SmRF Mini</h3>
+      <div class="pathThumb"><img src="assets/smrf-mini-controller.png" alt="SmRF Mini autonomous local variable-speed radon controller"/></div>
+      <p>The first integrated CRM-to-fan control loop for residential mitigation: measurement, target selection, automatic 0–10 V fan control, and local verification.</p>
+      <ul><li>No network setup</li><li>No account or app</li><li>Autonomous local operation</li></ul>
+    </article>
+    <article class="futureCard connectedCard">
+      <div class="futureLabel">Connected evolution</div><h3>SmRF WiFi</h3>
+      <div class="pathThumb"><img src="assets/smrf-production-mockup.png" alt="SmRF WiFi connected variable-speed radon controller concept"/></div>
+      <p>The extensively developed connected SmRF platform combines local variable-speed control with WiFi reporting, remote diagnostics, software support, and installation visibility.</p>
+      <ul><li>Control remains local</li><li>Remote reporting and diagnostics</li><li>Foundation for connected services</li></ul>
+    </article>
+    <article class="futureCard viewerCard">
+      <div class="futureLabel">Remote monitoring layer</div><h3>SmRF Viewer</h3>
+      <div class="pathThumb"><img src="assets/smrf-viewer-variable-speed.png" alt="SmRF Viewer showing remote installation status and variable-speed performance"/></div>
+      <p>The Viewer turns connected installations into a remotely visible fleet with performance history, operating status, attention rules, reports, and service information.</p>
+      <ul><li>Installation and fleet status</li><li>Radon and fan history</li><li>Remote verification and support</li></ul>
+      <div class="ctaRow"><a class="btn miniSecondary" href="viewer.html">Explore the Viewer</a><a class="btn miniSecondary" href="https://api.smartradonfan.com/installer">Viewer Login</a></div>
+    </article>
+  </div>
 </section>
 
-<section class="section" id="local-status">
-<div class="sectionHeader">
-<h3>Local setup and visible operation</h3>
-<p>The control system remains local in both SmRF versions. The current VS-WiFi managed interface shows sensor connection, system state, selected radon target, execution frequency, chart status, and reporting state. VS-BLE is intended to provide the corresponding setup and status workflow through a smartphone interface.</p>
-</div>
-<div class="split">
-<div class="panel"><h4>Local control</h4><ul><li>Select the target radon level.</li><li>Set control execution behavior.</li><li>Review current sensor and system status.</li><li>Control continues locally without cloud dependency.</li></ul></div>
-<div class="panel"><img alt="SmRF variable-speed local managed status interface" src="assets/smrf-variable-speed-ui.jpg" style="max-height:620px;object-fit:contain;margin-top:0;"/></div>
-</div>
+<section class="miniSection contactSection" id="contact">
+  <div><div class="miniEyebrow">Industry and research contact</div><h2>Help bring controlled residential radon mitigation to market.</h2><p>We welcome conversations with fan manufacturers, radon equipment distributors, mitigation professionals, contract manufacturers, and research organizations.</p></div>
+  <div class="contactCard"><strong>Michael J. Gutmann</strong><span>Residential Radon Solutions, LLC</span><a href="mailto:info@smartradonfan.com">info@smartradonfan.com</a><span>503 869 9507</span></div>
 </section>
+</main>
 
-<section class="section" id="contact">
-<div class="sectionHeader">
-<h3>This is what we’re building. Are you interested?</h3>
-<p>We welcome conversations with radon fan manufacturers, equipment distributors, mitigation installers, contract manufacturers, and research organizations interested in CRM-based variable-speed mitigation — with either connected Viewer capability or a simpler BLE/local workflow.</p>
-</div>
-<div class="split">
-<div class="panel"><h4 id="contactName">Michael J. Gutmann</h4><p style="margin:0;color:var(--muted)"><span id="contactPhone">503 869 9507</span></p><div style="height:10px"></div><p class="small"><a class="link" href="mailto:info@smartradonfan.com"><span id="contactEmail">info@smartradonfan.com</span></a></p></div>
-<div class="panel"><h4>SmRF platform</h4><ul><li>CRM-based closed-loop radon control</li><li>Target-based variable-speed fan algorithms</li><li>Hardwired 0–10 V fan command over 18/2 cable</li><li><strong>VS-WiFi:</strong> optional Viewer, alerts, reports, remote verification</li><li><strong>VS-BLE:</strong> local smartphone setup/status, no permanent home WiFi required</li></ul><p class="small">Patent pending. Development and field-validation platform; final production configuration and certification are in progress.</p></div>
-</div>
-</section>
-
-<footer class="footer"><div class="row"><div><div style="font-weight:650;color:var(--text)"><span id="productName">SmRF — Smart Radon Fan</span> <span class="muted" style="font-weight:500;font-size:12px;margin-left:8px">Patent Pending</span></div></div><div class="badges"><span class="badge">Measure</span><span class="badge">Adjust</span><span class="badge">Verify</span></div></div><div style="height:10px"></div><div class="small">SmRF is a locally autonomous variable-speed radon mitigation control platform from Residential Radon Solutions, LLC.</div></footer>
+<footer class="footer miniFooter"><div><strong>SmRF — Smart Radon Fan</strong><span>Patent Pending</span></div><p>SmRF Mini and SmRF WiFi are under development. Final production configurations, testing, and applicable certification remain in progress.</p></footer>
 </div>
 <script src="config.js"></script><script src="app.js"></script>
 </body>
