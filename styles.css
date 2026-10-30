@@ -1139,3 +1139,9 @@ a{color:inherit}
   .lightPage .container{padding-left:17px;padding-right:17px;}
   .lightPage .logoimg{width:112px;height:60px;}
 }
+
+/* SMRF_LOOP_STEP_ALIGNMENT_PREVIEW_20261030 */
+/* Align all four numbered circles at the same top height; arrows stay centered. */
+@media (min-width: 721px) {
+    .loopGrid > .loopStep { align-self: start; }
+}
