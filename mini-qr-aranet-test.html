@@ -75,7 +75,7 @@ function processLine(line){
  if(line.includes('SMRF_QR_TIME_SYNC:'))status('nRF acknowledged PC time. Awaiting QR or NOT_READY response...');
  if(line.includes('SMRF_QR_ERROR:'))status(line.trim());
  if(line.includes('SMRF_QR_LIVE_READY:'))status('nRF UART listener ready. Click Sync PC Time & Generate Real QR.');
- if(line.includes('SMRF_QR_LIVE_STATS ')$('dataStats').textContent=line.trim().replace(/^.*SMRF_QR_LIVE_STATS /,'');
+ if(line.includes('SMRF_QR_LIVE_STATS '))$('dataStats').textContent=line.trim().replace(/^.*SMRF_QR_LIVE_STATS /,'');
  if(line.includes('SMRF_QR_LIVE_NOT_READY:'))status('No recent Aranet samples for today. Wait for a new sample and retry.');
  if(line.includes('SMRF_QR_TIME_ERROR:'))status('nRF rejected the PC time command.');
  lines.push(line);if(lines.length>180)lines=lines.slice(-180);
