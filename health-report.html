@@ -239,6 +239,12 @@ function drawOverlayChart(id, report){
    open=true;
  });
  svg.append(svgEl('path',{d:dFan,class:'line-fan'}));
+ // A one-day report has only one fan sample; an SVG path with just M is
+ // invisible. Draw the actual sampled shadow-command point explicitly.
+ if(fan.filter(Number.isFinite).length===1){
+   const i=fan.findIndex(Number.isFinite);
+   svg.append(svgEl('circle',{cx:x(i),cy:yFan(fan[i]),r:5,fill:COLORS.fan}));
+ }
  svg.append(svgEl('path',{d:pathFor(radon7,x,yRadon),class:'line-radon-avg'}));
  svg.append(svgEl('path',{d:pathFor(radon,x,yRadon),class:'line-radon'}));
  // A lone data point still needs to be visible; do not fabricate a line.
@@ -263,7 +269,7 @@ function render(report){
  const suffix=report.partialLast?' · Latest day is partial (so far)':'';
  $('period').textContent=`${formatDate(report.dates[0])} – ${formatDate(report.dates.at(-1))} · ${count} measured day${count===1?'':'s'} in ${days} calendar-day slot${days===1?'':'s'}${suffix} · Target: ${report.target.toFixed(1)} pCi/L`;
  $('details').textContent=`Encoding version ${report.version}. ${report.demo?'Simulation only.':'Data unverified; QR is not authenticated.'}`;
- $('flag').textContent=report.demo?'DEMONSTRATION ONLY — synthetic measurements, not actual SmRF data. Not for health or mitigation decisions.':'UNVERIFIED REPORT — these QR measurements are not authenticated. Not for health or mitigation decisions.';
+ $('flag').textContent=report.demo?'DEMONSTRATION ONLY — synthetic measurements, not actual SmRF data. Not for health or mitigation decisions.':'UNVERIFIED ENGINEERING REPORT — radon readings may cover only part of a day; fan percentages are commanded values, not measured RPM. QR data is not authenticated. Not for health or mitigation decisions.';
  $('chart-note').textContent='Red = recorded radon; orange = trailing 7-day mean (only after seven consecutive days); green dashed = target; blue stepped = commanded fan %. Missing days remain blank. Left axis: pCi/L; right axis: %. A partial latest day is preliminary.';
  drawOverlayChart('overlay-chart',report);
  $('message').style.display='none';$('dashboard').style.display='block';
