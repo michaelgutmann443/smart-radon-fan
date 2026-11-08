@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>SmRF Mini · QR Health Report Test</title>
-<meta name="robots" content="noindex,nofollow">
+<title>SmRF Mini · BLE Viewer + Health Report QR (Prototype)</title>
 <style>
 :root { color-scheme: dark; --bg:#0e1724;--panel:#172335;--line:#31445b;--accent:#7ee0c4;--fg:#ecf4fb;--muted:#a6b7c9; }
 *{box-sizing:border-box}body{margin:0;background:var(--bg);font:16px/1.5 system-ui,Arial,sans-serif;color:var(--fg)}
@@ -54,105 +53,115 @@ small{color:var(--muted)}
 </dl>
 <section class="reportDemo" aria-labelledby="reportTitle">
   <div class="eyebrow">Proof of concept · QR data transfer</div>
-  <h2 id="reportTitle">30-day Health Report QR</h2>
-  <p><strong>DEMONSTRATION DATA:</strong> Generates 30 synthetic daily radon averages and fan-utilization values. These are not readings from the nRF.</p>
-  <button id="qrGenerate" type="button">Generate Health Report QR</button>
+  <h2 id="reportTitle">Health Report QR — 1 to 30 days</h2>
+  <p><strong>DEMONSTRATION DATA:</strong> Generates 1–30 days of synthetic radon and fan-utilization summaries. They are NOT readings from the nRF. Short reports are valid; missing days are never filled in.</p>
+  <label for="demoDays" style="display:inline-block;margin:8px 10px 10px 0">Number of simulated days:</label>
+  <select id="demoDays" style="padding:9px 13px;border-radius:8px;font:inherit;background:#ecf4fb;color:#102029">
+    <option value="1">1 day</option><option value="3" selected>3 days</option><option value="7">7 days</option><option value="14">14 days</option><option value="30">30 days</option>
+  </select>
+  <label style="display:inline-flex;gap:7px;align-items:center;margin:0 10px 12px 0"><input id="partialLast" type="checkbox" checked>Current day is partial</label>
+  <div><button id="qrGenerate" type="button">Generate Health Report QR</button></div>
   <div id="qrBox" class="qrBox">
-    <div class="qrCanvasWrap"><canvas id="qrCanvas" width="240" height="240" aria-label="Demo QR code linking to the 30-day Health Report"></canvas></div>
-    <div class="qrText"><strong>Scan this with your iPhone camera.</strong><p>Tap the link to smartradonfan.com. The website will render the single overlaid 30-day radon and fan chart.</p><div id="qrMetrics"></div><p style="margin-top:13px"><a id="qrLink" href="#" target="_blank" rel="noopener noreferrer">Open report on this laptop</a></p><small>Testing at 240 × 240 pixels, to approximate a small Mini display. QR uses error correction M and a four-module quiet zone.</small></div>
+    <div class="qrCanvasWrap"><canvas id="qrCanvas" width="240" height="240" aria-label="Demo QR code linking to the available-history Health Report"></canvas></div>
+    <div class="qrText"><strong>Scan this with your iPhone camera.</strong><p>Tap the link to smartradonfan.com. The website will render the single overlaid radon/fan chart for the selected number of days.</p><div id="qrMetrics"></div><p style="margin-top:13px"><a id="qrLink" href="#" target="_blank" rel="noopener noreferrer">Open report on this laptop</a></p><small>Testing at 240 × 240 pixels, to approximate a small Mini display. QR uses error correction M and a four-module quiet zone.</small></div>
   </div>
 </section>
 <p><small>Engineering build: BLE data is not yet authenticated. Do not use for a deployed customer installation. Historical charts and authorized configuration writes are next-stage features.</small></p>
 <div id="error" role="alert"></div>
 </main>
 <script>
-/* SmRF Health Report QR prototype v1 (DEMO ONLY).
- * Shared by desktop BLE Viewer and smartphone report page.
- * Fragments (#d=...) keep the report data out of the HTTP request itself.
- * Format, exactly 100 bytes:
- *   0..1   'S' 'R'; 2 = protocol 1; 3 = 0x01 demo-only
- *   4..5   starting UTC day since 2020-01-01, unsigned LE
- *   6      day count = 30; 7 target pCi/L in tenths (0..255)
- *   8..97  30 triples: radon *100 u16LE, fan % u8
- *   98..99 CRC-16/CCITT-FALSE, unsigned little endian
- * Production format needs a new version and an authenticated trust model.
+/* SmRF Mini Health Report QR wire format v2 (PROTOTYPE).
+ * Backward compatible: v1 30-day sample QR codes continue to decode.
+ * v2: 10 + 3*N bytes, where N is 1..30 consecutive calendar-day slots.
+ *  0..1: 'S','R'; 2: version=2; 3: flags (bit0 DEMO, bit1 last day partial)
+ *  4..5: first UTC date (days from 2020-01-01), LE
+ *  6: day slot count 1..30; 7: radon target in tenths of pCi/L
+ *  8..(8+3*N-1): per day (u16 radon*100, u8 commanded fan %)
+ *  Missing day: radon=0xffff AND fan=0xff; NEVER interpolate missing data.
+ *  8+3*N..9+3*N: CRC16 CCITT-FALSE, LE
+ * Provenance: CRC catches accidental corruption but does NOT authenticate data.
  */
 (function(global){
-  'use strict';
-  const ORIGIN_MS=Date.UTC(2020,0,1),DAY_MS=86400000,COUNT=30,BYTES=100;
-  function crc16(bytes,n=bytes.length){
-    let crc=0xffff;
-    for(let i=0;i<n;i++){
-      crc ^= bytes[i]<<8;
-      for(let k=0;k<8;k++) crc=(crc&0x8000)?((crc<<1)^0x1021)&0xffff:(crc<<1)&0xffff;
-    }
-    return crc;
-  }
-  function base64Url(bytes){
-    let bin='';for(const b of bytes)bin+=String.fromCharCode(b);
-    return btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
-  }
-  function fromBase64Url(str){
-    if(!/^[A-Za-z0-9_-]+$/.test(str))throw Error('Invalid report characters.');
-    const norm=str.replace(/-/g,'+').replace(/_/g,'/');
-    const raw=atob(norm+'='.repeat((4-norm.length%4)%4));
-    return Uint8Array.from(raw,c=>c.charCodeAt(0));
-  }
-  function toStartDay(iso){
-    if(!/^\d{4}-\d{2}-\d{2}$/.test(iso))throw Error('Invalid start date.');
-    const ms=Date.parse(iso+'T00:00:00Z');
-    if(!Number.isFinite(ms)||new Date(ms).toISOString().slice(0,10)!==iso)throw Error('Invalid UTC date.');
-    const day=(ms-ORIGIN_MS)/DAY_MS;
-    if(day<0||day>65505)throw Error('Start date outside supported range.');
-    return day;
-  }
-  function encode({startDate,target,radon,fan}){
-    if(!Array.isArray(radon)||!Array.isArray(fan)||radon.length!==COUNT||fan.length!==COUNT)throw Error('Exactly 30 daily data points required.');
-    const day=toStartDay(startDate);
-    const t=Math.round(target*10);
-    if(!Number.isFinite(target)||t<0||t>255)throw Error('Target out of range.');
-    const b=new Uint8Array(BYTES);
-    b[0]=0x53;b[1]=0x52;b[2]=1;b[3]=1;
-    b[4]=day&255;b[5]=day>>>8;b[6]=COUNT;b[7]=t;
-    for(let i=0;i<COUNT;i++){
-      const r=Math.round(radon[i]*100),f=Math.round(fan[i]);
-      if(!Number.isFinite(radon[i])||r<0||r>65535||!Number.isFinite(fan[i])||f<0||f>100)throw Error('Invalid measurement on day '+(i+1));
-      b[8+i*3]=r&255;b[9+i*3]=r>>>8;b[10+i*3]=f;
-    }
-    const crc=crc16(b,BYTES-2);b[BYTES-2]=crc&255;b[BYTES-1]=crc>>>8;
-    return base64Url(b);
-  }
-  function decode(fragment){
-    const b=fromBase64Url(fragment);
-    if(b.length!==BYTES)throw Error('Unexpected report size ('+b.length+' bytes).');
-    if(b[0]!==0x53||b[1]!==0x52||b[2]!==1)throw Error('Unknown report format or version.');
-    if(b[3]!==1)throw Error('Only DEMO-marked reports are accepted in this prototype.');
-    if(b[6]!==COUNT)throw Error('Unsupported day count.');
-    const crc=crc16(b,BYTES-2),given=b[98]|(b[99]<<8);
-    if(crc!==given)throw Error('QR payload checksum mismatch.');
-    const day=b[4]|(b[5]<<8),startDate=new Date(ORIGIN_MS+day*DAY_MS).toISOString().slice(0,10),target=b[7]/10;
-    const radon=[],fan=[],dates=[];
-    for(let i=0;i<COUNT;i++){
-      const r=(b[8+3*i]|(b[9+3*i]<<8))/100,f=b[10+3*i];
-      if(f>100)throw Error('Invalid fan percentage.');
-      radon.push(r);fan.push(f);dates.push(new Date(ORIGIN_MS+(day+i)*DAY_MS).toISOString().slice(0,10));
-    }
-    return {version:1,demo:true,startDate,dates,target,radon,fan};
-  }
-  function sampleData(){
-    // Stable synthetic shape; daily averages are illustrative, not actual SmRF observations.
-    const d=new Date(); const today=Date.UTC(d.getFullYear(),d.getMonth(),d.getDate());
-    const startDate=new Date(today-(COUNT-1)*DAY_MS).toISOString().slice(0,10);
-    const radon=[],fan=[];
-    for(let i=0;i<COUNT;i++){
-      const rr=2.08+0.55*Math.sin((i+3)*.46)+0.32*Math.cos(i*.23)+(i>=11&&i<=13?0.9:0)-(i>22?0.23:0);
-      const ff=59+15*Math.sin((i+1)*.32)+11*Math.cos(i*.22)+(i>=11&&i<=13?17:0);
-      radon.push(Math.round(Math.max(.4,rr)*100)/100);
-      fan.push(Math.max(20,Math.min(100,Math.round(ff))));
-    }
-    return {startDate,target:2.0,radon,fan};
-  }
-  global.SmrfHealthFormat=Object.freeze({encode,decode,sampleData,crc16,version:1});
+ 'use strict';
+ const ORIGIN_MS=Date.UTC(2020,0,1),DAY_MS=86400000,MAX_DAYS=30;
+ function crc16(bytes,n=bytes.length){
+   let crc=0xffff;
+   for(let i=0;i<n;i++){crc^=bytes[i]<<8;for(let k=0;k<8;k++)crc=(crc&0x8000)?((crc<<1)^0x1021)&0xffff:(crc<<1)&0xffff;}
+   return crc;
+ }
+ function base64Url(bytes){let bin='';for(const b of bytes)bin+=String.fromCharCode(b);return btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}
+ function fromBase64Url(str){
+   if(!/^[A-Za-z0-9_-]+$/.test(str))throw Error('Invalid report characters.');
+   let v=str.replace(/-/g,'+').replace(/_/g,'/');
+   return Uint8Array.from(atob(v+'='.repeat((4-v.length%4)%4)),c=>c.charCodeAt(0));
+ }
+ function toStartDay(iso){
+   if(!/^\d{4}-\d{2}-\d{2}$/.test(iso))throw Error('Invalid report date.');
+   const ms=Date.parse(iso+'T00:00:00Z');
+   if(!Number.isFinite(ms)||new Date(ms).toISOString().slice(0,10)!==iso)throw Error('Invalid report date.');
+   const day=(ms-ORIGIN_MS)/DAY_MS;
+   if(day<0||day>65505)throw Error('Date outside supported range.');
+   return day;
+ }
+ function encode({startDate,target,radon,fan,partialLast=false,demo=true}){
+   if(!Array.isArray(radon)||!Array.isArray(fan)||radon.length!==fan.length||radon.length<1||radon.length>MAX_DAYS)
+     throw Error('Report must contain 1–30 calendar-day slots.');
+   if(typeof partialLast!=='boolean'||typeof demo!=='boolean')throw Error('Invalid report flags.');
+   const day=toStartDay(startDate),n=radon.length,scaledTarget=Math.round(target*10);
+   if(!Number.isFinite(target)||scaledTarget<0||scaledTarget>255)throw Error('Invalid target.');
+   const b=new Uint8Array(10+3*n);
+   b[0]=0x53;b[1]=0x52;b[2]=2;b[3]=(demo?1:0)|(partialLast?2:0);
+   b[4]=day&255;b[5]=day>>>8;b[6]=n;b[7]=scaledTarget;
+   for(let i=0;i<n;i++){
+     const off=8+3*i,rv=radon[i],fv=fan[i];
+     if(rv===null&&fv===null){b[off]=255;b[off+1]=255;b[off+2]=255;continue;}
+     if(!Number.isFinite(rv)||rv<0||rv>655.34||!Number.isFinite(fv)||fv<0||fv>100)throw Error('Invalid day '+(i+1));
+     const rad=Math.round(rv*100),f=Math.round(fv);
+     b[off]=rad&255;b[off+1]=rad>>>8;b[off+2]=f;
+   }
+   const check=crc16(b,b.length-2);b[b.length-2]=check&255;b[b.length-1]=check>>>8;
+   return base64Url(b);
+ }
+ function decode(fragment){
+   const b=fromBase64Url(fragment);
+   if(b.length<13||b[0]!==0x53||b[1]!==0x52)throw Error('Invalid report format.');
+   const version=b[2],n=b[6],flags=b[3];
+   if(version!==1&&version!==2)throw Error('Unsupported report version.');
+   if((version===1&&(n!==30||b.length!==100||flags!==1))||
+      (version===2&&(n<1||n>30||b.length!==10+3*n||(flags&~3))))throw Error('Invalid report length or flags.');
+   const offset=b.length-2,check=crc16(b,offset),given=b[offset]|(b[offset+1]<<8);
+   if(check!==given)throw Error('QR payload checksum mismatch.');
+   const day=b[4]|(b[5]<<8),target=b[7]/10;
+   const startDate=new Date(ORIGIN_MS+day*DAY_MS).toISOString().slice(0,10);
+   const radon=[],fan=[],dates=[];
+   for(let i=0;i<n;i++){
+     const off=8+3*i,rv=b[off]|(b[off+1]<<8),fv=b[off+2];
+     if(version===2&&rv===65535&&fv===255){radon.push(null);fan.push(null);}
+     else{
+       if(rv===65535||fv>100)throw Error('Invalid day record.');
+       radon.push(rv/100);fan.push(fv);
+     }
+     dates.push(new Date(ORIGIN_MS+(day+i)*DAY_MS).toISOString().slice(0,10));
+   }
+   if(radon.every(v=>v===null))throw Error('Report contains no measurements.');
+   const partialLast=version===2&&!!(flags&2);
+   if(partialLast&&radon[n-1]===null)throw Error('Partial-day flag without a latest measurement.');
+   return {version,demo:!!(flags&1),partialLast,startDate,dates,target,radon,fan,days:n};
+ }
+ function sampleData(days=3,partialLast=true){
+   if(!Number.isInteger(days)||days<1||days>30)throw Error('Choose 1–30 days.');
+   const now=new Date(),today=Date.UTC(now.getFullYear(),now.getMonth(),now.getDate());
+   const startDate=new Date(today-(days-1)*DAY_MS).toISOString().slice(0,10),radon=[],fan=[];
+   for(let i=0;i<days;i++){
+     const j=i+30-days;
+     const rr=2.08+0.55*Math.sin((j+3)*.46)+0.32*Math.cos(j*.23)+(j>=11&&j<=13?0.9:0)-(j>22?0.23:0);
+     const ff=59+15*Math.sin((j+1)*.32)+11*Math.cos(j*.22)+(j>=11&&j<=13?17:0);
+     radon.push(Math.round(Math.max(.4,rr)*100)/100);
+     fan.push(Math.max(20,Math.min(100,Math.round(ff))));
+   }
+   return {startDate,target:2,radon,fan,partialLast,demo:true};
+ }
+ global.SmrfHealthFormat=Object.freeze({encode,decode,sampleData,crc16,version:2});
 })(typeof window!=='undefined'?window:globalThis);
 
 </script>
@@ -989,7 +998,6 @@ var QRUtil = require('./QRUtil');
 var QRPolynomial = require('./QRPolynomial');
 var QRRSBlock = require('./QRRSBlock');
 var QRBitBuffer = require('./QRBitBuffer');
-
 function QRCode(typeNumber, errorCorrectLevel) {
 	this.typeNumber = typeNumber;
 	this.errorCorrectLevel = errorCorrectLevel;
@@ -998,6 +1006,7 @@ function QRCode(typeNumber, errorCorrectLevel) {
 	this.dataCache = null;
 	this.dataList = [];
 }
+
 QRCode.prototype = {
 	
 	addData : function(data) {
@@ -1465,7 +1474,7 @@ async function refresh() {
 }
 async function connect() {
   if (!navigator.bluetooth) {
-    setText('error','This browser does not expose Web Bluetooth. Use Chrome on Windows with this HTTPS test page (or http://localhost).');
+    setText('error','This browser does not expose Web Bluetooth. Try Windows Chrome at http://localhost, or a BLE-capable iPhone browser over HTTPS.');
     return;
   }
   try {
@@ -1488,7 +1497,8 @@ async function connect() {
 }
 function generateDemoQR() {
   const format=window.SmrfHealthFormat,qrClass=window.SmrfQR;
-  const demo=format.sampleData(),payload=format.encode(demo);
+  const days=Number(el('demoDays').value),partial=el('partialLast').checked;
+  const demo=format.sampleData(days,partial),payload=format.encode(demo);
   const url='https://www.smartradonfan.com/health-report.html#d='+payload;
   const qr=new qrClass(0,0); // automatic minimum QR version; 0 = error correction M
   qr.addData(url);qr.make();
@@ -1500,11 +1510,11 @@ function generateDemoQR() {
   ctx.fillStyle='#000';
   for(let y=0;y<n;y++)for(let x=0;x<n;x++)if(qr.isDark(y,x))ctx.fillRect(origin+x*cell,origin+y*cell,cell,cell);
   el('qrLink').href=url;
-  el('qrMetrics').textContent=`${payload.length} encoded characters · ${url.length} total URL characters · QR v${qr.typeNumber} (${n} × ${n} modules) · ${cell} pixels/module`;
+  el('qrMetrics').textContent=`${days} simulated day${days===1?'':'s'}${partial?' · latest day partial':''} · ${payload.length} encoded characters · ${url.length} URL characters · QR v${qr.typeNumber} (${n} × ${n} modules) · ${cell} px/module`;
   el('qrBox').style.display='flex';
 }
 el('qrGenerate').addEventListener('click',()=>{try{generateDemoQR();setText('error','')}catch(e){setText('error','QR generation failed: '+e.message)}});
 el('connect').addEventListener('click',connect);
 el('refresh').addEventListener('click',refresh);
-if (!window.isSecureContext) setText('error','Web Bluetooth requires HTTPS or localhost.');
+if (!window.isSecureContext) setText('error','Web Bluetooth requires a secure context. Use http://localhost on Windows or HTTPS on iPhone.');
 </script></body></html>
