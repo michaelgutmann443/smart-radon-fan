@@ -40,110 +40,115 @@ footer{margin-top:27px;color:var(--muted);font-size:13px}.metadata{color:var(--m
 </head>
 <body><main>
 <nav><a class="brand" href="index.html">SmRF <span>Smart Radon Fan</span></a><a href="about.html">About SmRF</a></nav>
-<header><div class="kicker">SmRF Mini · Health Report</div><h1>SmRF Mini | Radon control</h1><p>30-day radon and fan performance. This QR report is decoded directly in your browser—no WiFi or cloud connection from SmRF Mini is required.</p></header>
-<div class="flag" role="note">DEMONSTRATION ONLY — simulated measurements, not a real home's radon history. Not for mitigation or health decisions.</div>
+<header><div class="kicker">SmRF Mini · Health Report</div><h1>SmRF Mini | Radon control</h1><p>Radon and fan performance · Available history. This QR report is decoded directly in your browser—no WiFi or cloud connection from SmRF Mini is required.</p></header>
+<div id="flag" class="flag" role="note">DEMONSTRATION ONLY — simulated measurements, not a real home's radon history. Not for mitigation or health decisions.</div>
 <section id="message" aria-live="polite"></section>
 <div id="dashboard">
 <div class="metadata" id="period"></div>
 <section class="summary">
-<div class="stat"><label>Latest radon</label><strong id="radon-latest">—</strong><small>Most recent daily average · pCi/L</small></div>
-<div class="stat"><label>7-day avg</label><strong id="radon-7">—</strong><small>Rolling radon average · pCi/L</small></div>
-<div class="stat"><label>30-day avg</label><strong id="radon-30">—</strong><small>Full report average · pCi/L</small></div>
+<div class="stat"><label>Latest radon</label><strong id="radon-latest">—</strong><small>Most recent daily value · pCi/L (may be partial)</small></div>
+<div class="stat"><label>7-day avg</label><strong id="radon-7">—</strong><small id="radon-7-note">Rolling radon average · pCi/L</small></div>
+<div class="stat"><label id="radon-period-label">30-day average</label><strong id="radon-30">—</strong><small>Available measured days · pCi/L</small></div>
 <div class="stat"><label>Avg fan utilization</label><strong id="fan-avg">—</strong><small>Commanded fan percentage</small></div>
 </section>
-<section class="panel"><h2>Overlaid radon and fan chart</h2><p class="note">Red = 30 daily radon averages; orange = rolling 7-day radon average; green dashed = target radon; blue stepped line = daily average commanded fan utilization (not measured RPM). Left axis: pCi/L. Right axis: percent. Swipe horizontally on a phone to see the full chart.</p><div class="chartViewport" tabindex="0" aria-label="Scroll horizontally to see the complete combined radon and fan chart"><svg id="overlay-chart" role="img" aria-label="Combined chart of daily average radon, seven-day average, radon target, and daily average fan utilization"></svg></div></section>
+<section class="panel"><h2>Overlaid radon and fan chart</h2><p class="note" id="chart-note">Red = 30 daily radon averages; orange = rolling 7-day radon average; green dashed = target radon; blue stepped line = daily average commanded fan utilization (not measured RPM). Left axis: pCi/L. Right axis: percent. Swipe horizontally on a phone to see the full chart.</p><div class="chartViewport" tabindex="0" aria-label="Scroll horizontally to see the complete combined radon and fan chart"><svg id="overlay-chart" role="img" aria-label="Combined chart of daily average radon, seven-day average, radon target, and daily average fan utilization"></svg></div></section>
 <div class="metadata">Report integrity verified (CRC-16). <span id="details"></span> This demonstration uses the QR link's fragment; the measurement data is not sent in the webpage request. Do not share a real report link publicly.</div>
 </div>
 <footer>Residential Radon Solutions, LLC · SmRF Mini experimental report · The Mini's normal fan control does not depend on this page.</footer>
 </main>
 <script>
-/* SmRF Health Report QR prototype v1 (DEMO ONLY).
- * Shared by desktop BLE Viewer and smartphone report page.
- * Fragments (#d=...) keep the report data out of the HTTP request itself.
- * Format, exactly 100 bytes:
- *   0..1   'S' 'R'; 2 = protocol 1; 3 = 0x01 demo-only
- *   4..5   starting UTC day since 2020-01-01, unsigned LE
- *   6      day count = 30; 7 target pCi/L in tenths (0..255)
- *   8..97  30 triples: radon *100 u16LE, fan % u8
- *   98..99 CRC-16/CCITT-FALSE, unsigned little endian
- * Production format needs a new version and an authenticated trust model.
+/* SmRF Mini Health Report QR wire format v2 (PROTOTYPE).
+ * Backward compatible: v1 30-day sample QR codes continue to decode.
+ * v2: 10 + 3*N bytes, where N is 1..30 consecutive calendar-day slots.
+ *  0..1: 'S','R'; 2: version=2; 3: flags (bit0 DEMO, bit1 last day partial)
+ *  4..5: first UTC date (days from 2020-01-01), LE
+ *  6: day slot count 1..30; 7: radon target in tenths of pCi/L
+ *  8..(8+3*N-1): per day (u16 radon*100, u8 commanded fan %)
+ *  Missing day: radon=0xffff AND fan=0xff; NEVER interpolate missing data.
+ *  8+3*N..9+3*N: CRC16 CCITT-FALSE, LE
+ * Provenance: CRC catches accidental corruption but does NOT authenticate data.
  */
 (function(global){
-  'use strict';
-  const ORIGIN_MS=Date.UTC(2020,0,1),DAY_MS=86400000,COUNT=30,BYTES=100;
-  function crc16(bytes,n=bytes.length){
-    let crc=0xffff;
-    for(let i=0;i<n;i++){
-      crc ^= bytes[i]<<8;
-      for(let k=0;k<8;k++) crc=(crc&0x8000)?((crc<<1)^0x1021)&0xffff:(crc<<1)&0xffff;
-    }
-    return crc;
-  }
-  function base64Url(bytes){
-    let bin='';for(const b of bytes)bin+=String.fromCharCode(b);
-    return btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
-  }
-  function fromBase64Url(str){
-    if(!/^[A-Za-z0-9_-]+$/.test(str))throw Error('Invalid report characters.');
-    const norm=str.replace(/-/g,'+').replace(/_/g,'/');
-    const raw=atob(norm+'='.repeat((4-norm.length%4)%4));
-    return Uint8Array.from(raw,c=>c.charCodeAt(0));
-  }
-  function toStartDay(iso){
-    if(!/^\d{4}-\d{2}-\d{2}$/.test(iso))throw Error('Invalid start date.');
-    const ms=Date.parse(iso+'T00:00:00Z');
-    if(!Number.isFinite(ms)||new Date(ms).toISOString().slice(0,10)!==iso)throw Error('Invalid UTC date.');
-    const day=(ms-ORIGIN_MS)/DAY_MS;
-    if(day<0||day>65505)throw Error('Start date outside supported range.');
-    return day;
-  }
-  function encode({startDate,target,radon,fan}){
-    if(!Array.isArray(radon)||!Array.isArray(fan)||radon.length!==COUNT||fan.length!==COUNT)throw Error('Exactly 30 daily data points required.');
-    const day=toStartDay(startDate);
-    const t=Math.round(target*10);
-    if(!Number.isFinite(target)||t<0||t>255)throw Error('Target out of range.');
-    const b=new Uint8Array(BYTES);
-    b[0]=0x53;b[1]=0x52;b[2]=1;b[3]=1;
-    b[4]=day&255;b[5]=day>>>8;b[6]=COUNT;b[7]=t;
-    for(let i=0;i<COUNT;i++){
-      const r=Math.round(radon[i]*100),f=Math.round(fan[i]);
-      if(!Number.isFinite(radon[i])||r<0||r>65535||!Number.isFinite(fan[i])||f<0||f>100)throw Error('Invalid measurement on day '+(i+1));
-      b[8+i*3]=r&255;b[9+i*3]=r>>>8;b[10+i*3]=f;
-    }
-    const crc=crc16(b,BYTES-2);b[BYTES-2]=crc&255;b[BYTES-1]=crc>>>8;
-    return base64Url(b);
-  }
-  function decode(fragment){
-    const b=fromBase64Url(fragment);
-    if(b.length!==BYTES)throw Error('Unexpected report size ('+b.length+' bytes).');
-    if(b[0]!==0x53||b[1]!==0x52||b[2]!==1)throw Error('Unknown report format or version.');
-    if(b[3]!==1)throw Error('Only DEMO-marked reports are accepted in this prototype.');
-    if(b[6]!==COUNT)throw Error('Unsupported day count.');
-    const crc=crc16(b,BYTES-2),given=b[98]|(b[99]<<8);
-    if(crc!==given)throw Error('QR payload checksum mismatch.');
-    const day=b[4]|(b[5]<<8),startDate=new Date(ORIGIN_MS+day*DAY_MS).toISOString().slice(0,10),target=b[7]/10;
-    const radon=[],fan=[],dates=[];
-    for(let i=0;i<COUNT;i++){
-      const r=(b[8+3*i]|(b[9+3*i]<<8))/100,f=b[10+3*i];
-      if(f>100)throw Error('Invalid fan percentage.');
-      radon.push(r);fan.push(f);dates.push(new Date(ORIGIN_MS+(day+i)*DAY_MS).toISOString().slice(0,10));
-    }
-    return {version:1,demo:true,startDate,dates,target,radon,fan};
-  }
-  function sampleData(){
-    // Stable synthetic shape; daily averages are illustrative, not actual SmRF observations.
-    const d=new Date(); const today=Date.UTC(d.getFullYear(),d.getMonth(),d.getDate());
-    const startDate=new Date(today-(COUNT-1)*DAY_MS).toISOString().slice(0,10);
-    const radon=[],fan=[];
-    for(let i=0;i<COUNT;i++){
-      const rr=2.08+0.55*Math.sin((i+3)*.46)+0.32*Math.cos(i*.23)+(i>=11&&i<=13?0.9:0)-(i>22?0.23:0);
-      const ff=59+15*Math.sin((i+1)*.32)+11*Math.cos(i*.22)+(i>=11&&i<=13?17:0);
-      radon.push(Math.round(Math.max(.4,rr)*100)/100);
-      fan.push(Math.max(20,Math.min(100,Math.round(ff))));
-    }
-    return {startDate,target:2.0,radon,fan};
-  }
-  global.SmrfHealthFormat=Object.freeze({encode,decode,sampleData,crc16,version:1});
+ 'use strict';
+ const ORIGIN_MS=Date.UTC(2020,0,1),DAY_MS=86400000,MAX_DAYS=30;
+ function crc16(bytes,n=bytes.length){
+   let crc=0xffff;
+   for(let i=0;i<n;i++){crc^=bytes[i]<<8;for(let k=0;k<8;k++)crc=(crc&0x8000)?((crc<<1)^0x1021)&0xffff:(crc<<1)&0xffff;}
+   return crc;
+ }
+ function base64Url(bytes){let bin='';for(const b of bytes)bin+=String.fromCharCode(b);return btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}
+ function fromBase64Url(str){
+   if(!/^[A-Za-z0-9_-]+$/.test(str))throw Error('Invalid report characters.');
+   let v=str.replace(/-/g,'+').replace(/_/g,'/');
+   return Uint8Array.from(atob(v+'='.repeat((4-v.length%4)%4)),c=>c.charCodeAt(0));
+ }
+ function toStartDay(iso){
+   if(!/^\d{4}-\d{2}-\d{2}$/.test(iso))throw Error('Invalid report date.');
+   const ms=Date.parse(iso+'T00:00:00Z');
+   if(!Number.isFinite(ms)||new Date(ms).toISOString().slice(0,10)!==iso)throw Error('Invalid report date.');
+   const day=(ms-ORIGIN_MS)/DAY_MS;
+   if(day<0||day>65505)throw Error('Date outside supported range.');
+   return day;
+ }
+ function encode({startDate,target,radon,fan,partialLast=false,demo=true}){
+   if(!Array.isArray(radon)||!Array.isArray(fan)||radon.length!==fan.length||radon.length<1||radon.length>MAX_DAYS)
+     throw Error('Report must contain 1–30 calendar-day slots.');
+   if(typeof partialLast!=='boolean'||typeof demo!=='boolean')throw Error('Invalid report flags.');
+   const day=toStartDay(startDate),n=radon.length,scaledTarget=Math.round(target*10);
+   if(!Number.isFinite(target)||scaledTarget<0||scaledTarget>255)throw Error('Invalid target.');
+   const b=new Uint8Array(10+3*n);
+   b[0]=0x53;b[1]=0x52;b[2]=2;b[3]=(demo?1:0)|(partialLast?2:0);
+   b[4]=day&255;b[5]=day>>>8;b[6]=n;b[7]=scaledTarget;
+   for(let i=0;i<n;i++){
+     const off=8+3*i,rv=radon[i],fv=fan[i];
+     if(rv===null&&fv===null){b[off]=255;b[off+1]=255;b[off+2]=255;continue;}
+     if(!Number.isFinite(rv)||rv<0||rv>655.34||!Number.isFinite(fv)||fv<0||fv>100)throw Error('Invalid day '+(i+1));
+     const rad=Math.round(rv*100),f=Math.round(fv);
+     b[off]=rad&255;b[off+1]=rad>>>8;b[off+2]=f;
+   }
+   const check=crc16(b,b.length-2);b[b.length-2]=check&255;b[b.length-1]=check>>>8;
+   return base64Url(b);
+ }
+ function decode(fragment){
+   const b=fromBase64Url(fragment);
+   if(b.length<13||b[0]!==0x53||b[1]!==0x52)throw Error('Invalid report format.');
+   const version=b[2],n=b[6],flags=b[3];
+   if(version!==1&&version!==2)throw Error('Unsupported report version.');
+   if((version===1&&(n!==30||b.length!==100||flags!==1))||
+      (version===2&&(n<1||n>30||b.length!==10+3*n||(flags&~3))))throw Error('Invalid report length or flags.');
+   const offset=b.length-2,check=crc16(b,offset),given=b[offset]|(b[offset+1]<<8);
+   if(check!==given)throw Error('QR payload checksum mismatch.');
+   const day=b[4]|(b[5]<<8),target=b[7]/10;
+   const startDate=new Date(ORIGIN_MS+day*DAY_MS).toISOString().slice(0,10);
+   const radon=[],fan=[],dates=[];
+   for(let i=0;i<n;i++){
+     const off=8+3*i,rv=b[off]|(b[off+1]<<8),fv=b[off+2];
+     if(version===2&&rv===65535&&fv===255){radon.push(null);fan.push(null);}
+     else{
+       if(rv===65535||fv>100)throw Error('Invalid day record.');
+       radon.push(rv/100);fan.push(fv);
+     }
+     dates.push(new Date(ORIGIN_MS+(day+i)*DAY_MS).toISOString().slice(0,10));
+   }
+   if(radon.every(v=>v===null))throw Error('Report contains no measurements.');
+   const partialLast=version===2&&!!(flags&2);
+   if(partialLast&&radon[n-1]===null)throw Error('Partial-day flag without a latest measurement.');
+   return {version,demo:!!(flags&1),partialLast,startDate,dates,target,radon,fan,days:n};
+ }
+ function sampleData(days=3,partialLast=true){
+   if(!Number.isInteger(days)||days<1||days>30)throw Error('Choose 1–30 days.');
+   const now=new Date(),today=Date.UTC(now.getFullYear(),now.getMonth(),now.getDate());
+   const startDate=new Date(today-(days-1)*DAY_MS).toISOString().slice(0,10),radon=[],fan=[];
+   for(let i=0;i<days;i++){
+     const j=i+30-days;
+     const rr=2.08+0.55*Math.sin((j+3)*.46)+0.32*Math.cos(j*.23)+(j>=11&&j<=13?0.9:0)-(j>22?0.23:0);
+     const ff=59+15*Math.sin((j+1)*.32)+11*Math.cos(j*.22)+(j>=11&&j<=13?17:0);
+     radon.push(Math.round(Math.max(.4,rr)*100)/100);
+     fan.push(Math.max(20,Math.min(100,Math.round(ff))));
+   }
+   return {startDate,target:2,radon,fan,partialLast,demo:true};
+ }
+ global.SmrfHealthFormat=Object.freeze({encode,decode,sampleData,crc16,version:2});
 })(typeof window!=='undefined'?window:globalThis);
 
 </script>
@@ -153,15 +158,24 @@ const $=id=>document.getElementById(id);
 const COLORS={radon:'#d9534f',radonAvg:'#d08a2d',target:'#6db39a',fan:'#7aa6d8'};
 function formatDate(str){return new Date(str+'T00:00:00Z').toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric',timeZone:'UTC'});}
 function svgEl(name,attrs={}){const n=document.createElementNS('http://www.w3.org/2000/svg',name);for(const k in attrs)n.setAttribute(k,attrs[k]);return n;}
-function mean(xs){return xs.reduce((p,v)=>p+v,0)/xs.length;}
-function rollingAverage(values,windowSize){return values.map((_,i)=>{const start=Math.max(0,i-windowSize+1);const slice=values.slice(start,i+1);return mean(slice);});}
+function mean(xs){const valid=xs.filter(v=>Number.isFinite(v));return valid.length?valid.reduce((p,v)=>p+v,0)/valid.length:null;}
+function rollingAverage(values,windowSize){return values.map((_,i)=>{
+  if(i<windowSize-1)return null;
+  const last=values.slice(i-windowSize+1,i+1);
+  return last.every(Number.isFinite)?mean(last):null;
+});}
+function pathFor(data,x,y){
+ let d='',open=false;
+ data.forEach((v,i)=>{if(!Number.isFinite(v)){open=false;return;}d+=(open?' L':' M')+x(i).toFixed(1)+','+y(v).toFixed(1);open=true;});
+ return d;
+}
 function drawOverlayChart(id, report){
  const svg=$(id);svg.replaceChildren();
  const W=940,H=420,L=64,R=64,T=70,B=48,gw=W-L-R,gh=H-T-B;
  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
  const dates=report.dates, radon=report.radon, fan=report.fan, radon7=rollingAverage(radon,7);
- const radonMax=Math.max(4,Math.ceil(Math.max(...radon, ...radon7, report.target)*2)/2);
- const x=i=>L+i/(radon.length-1)*gw;
+ const radonMax=Math.max(4,Math.ceil(Math.max(...radon.filter(Number.isFinite), ...radon7.filter(Number.isFinite), report.target)*2)/2);
+ const x=i=>radon.length===1?L+gw/2:L+i/(radon.length-1)*gw;
  const yRadon=v=>T+(radonMax-v)/radonMax*gh;
  const yFan=v=>T+(100-v)/100*gh;
  
@@ -181,20 +195,21 @@ function drawOverlayChart(id, report){
  const leftTitle=svgEl('text',{x:18,y:T+gh/2,class:'axis',transform:`rotate(-90 18 ${T+gh/2})`,'text-anchor':'middle'}); leftTitle.textContent='Radon concentration (pCi/L)'; svg.append(leftTitle);
  const rightTitle=svgEl('text',{x:W-18,y:T+gh/2,class:'axis',transform:`rotate(90 ${W-18} ${T+gh/2})`,'text-anchor':'middle'}); rightTitle.textContent='Fan utilization (%)'; svg.append(rightTitle);
  
- [0,7,14,21,29].forEach(i=>{
-   const label=svgEl('text',{x:x(i),y:H-14,class:'axis','text-anchor':i===0?'start':i===29?'end':'middle'});
+ const ticks=radon.length===1?[0]:Array.from(new Set([0,Math.floor((radon.length-1)/4),Math.floor((radon.length-1)/2),Math.floor(3*(radon.length-1)/4),radon.length-1]));
+ ticks.forEach(i=>{
+   const label=svgEl('text',{x:x(i),y:H-14,class:'axis','text-anchor':radon.length===1?'middle':i===0?'start':i===radon.length-1?'end':'middle'});
    label.textContent=formatDate(dates[i]).replace(/, 20\d\d/,'');
    svg.append(label);
  });
  
  // Title line/metadata within SVG
- const meta=svgEl('text',{x:L,y:26,class:'axis'}); meta.textContent=`${formatDate(dates[0])} – ${formatDate(dates[29])} · 30 daily records · Target ${report.target.toFixed(1)} pCi/L`; svg.append(meta);
+ const meta=svgEl('text',{x:L,y:26,class:'axis'}); meta.textContent=`${formatDate(dates[0])} – ${formatDate(dates.at(-1))} · ${dates.length} calendar-day slot${dates.length===1?'':'s'} · Target ${report.target.toFixed(1)} pCi/L`; svg.append(meta);
  
  // Legend
  const legend=svgEl('g',{'class':'legend'});
  const items=[
    ['Daily-average radon',COLORS.radon,'swatch-radon'],
-   ['7-day average',COLORS.radonAvg,'swatch-radon-avg'],
+   [radon7.some(Number.isFinite)?'7-day average':'7-day avg (not ready)',COLORS.radonAvg,'swatch-radon-avg'],
    ['Target radon',COLORS.target,'swatch-target'],
    ['Fan utilization',COLORS.fan,'swatch-fan']
  ];
@@ -215,38 +230,45 @@ function drawOverlayChart(id, report){
  // target line
  svg.append(svgEl('line',{x1:L,y1:yRadon(report.target),x2:W-R,y2:yRadon(report.target),class:'target'}));
  
- // stepped fan path
- let dFan=`M${x(0).toFixed(1)},${yFan(fan[0]).toFixed(1)}`;
- for(let i=1;i<fan.length;i++){
-   dFan += ` H${x(i).toFixed(1)} V${yFan(fan[i]).toFixed(1)}`;
- }
+ // Stepped fan series; discontinuities are gaps, not zero utilization.
+ let dFan='',open=false;
+ fan.forEach((value,i)=>{
+   if(!Number.isFinite(value)){open=false;return;}
+   if(!open)dFan+=` M${x(i).toFixed(1)},${yFan(value).toFixed(1)}`;
+   else dFan+=` H${x(i).toFixed(1)} V${yFan(value).toFixed(1)}`;
+   open=true;
+ });
  svg.append(svgEl('path',{d:dFan,class:'line-fan'}));
- 
- // radon lines
- const mkLine=(data,fn)=>data.map((v,i)=>`${i?'L':'M'}${x(i).toFixed(1)},${fn(v).toFixed(1)}`).join(' ');
- svg.append(svgEl('path',{d:mkLine(radon7,yRadon),class:'line-radon-avg'}));
- svg.append(svgEl('path',{d:mkLine(radon,yRadon),class:'line-radon'}));
- 
- // radon markers with tooltips
- for(let i=0;i<radon.length;i++){
-   const c=svgEl('circle',{cx:x(i),cy:yRadon(radon[i]),r:3,fill:COLORS.radon});
-   const t=svgEl('title');
-   t.textContent=`${dates[i]}: radon ${radon[i].toFixed(2)} pCi/L, 7-day avg ${radon7[i].toFixed(2)} pCi/L, fan ${fan[i]}%`;
-   c.append(t); svg.append(c);
- }
+ svg.append(svgEl('path',{d:pathFor(radon7,x,yRadon),class:'line-radon-avg'}));
+ svg.append(svgEl('path',{d:pathFor(radon,x,yRadon),class:'line-radon'}));
+ // A lone data point still needs to be visible; do not fabricate a line.
+ radon.forEach((value,i)=>{
+   if(!Number.isFinite(value))return;
+   const c=svgEl('circle',{cx:x(i),cy:yRadon(value),r:3.6,fill:COLORS.radon});
+   const t=svgEl('title');t.textContent=`${dates[i]}: radon ${value.toFixed(2)} pCi/L, fan ${fan[i]}%${i===radon.length-1&&report.partialLast?' (partial day)':''}`;
+   c.append(t);svg.append(c);
+ });
 }
 function render(report){
- const radon7=rollingAverage(report.radon,7);
- $('radon-latest').textContent=report.radon.at(-1).toFixed(1);
- $('radon-7').textContent=radon7.at(-1).toFixed(1);
- $('radon-30').textContent=mean(report.radon).toFixed(1);
- $('fan-avg').textContent=Math.round(mean(report.fan)*10)/10+'%';
- $('period').textContent=`${formatDate(report.dates[0])} – ${formatDate(report.dates[29])} · 30 daily records · Target: ${report.target.toFixed(1)} pCi/L`;
- $('details').textContent='Encoding version '+report.version+'.';
+ const radon7=rollingAverage(report.radon,7),latest=report.radon.at(-1),valid=report.radon.filter(Number.isFinite);
+ const latest7=radon7.at(-1),days=report.dates.length,completeDays=valid.length-(report.partialLast?1:0);
+ $('radon-latest').textContent=Number.isFinite(latest)?latest.toFixed(2):'—';
+ $('radon-7').textContent=Number.isFinite(latest7)?latest7.toFixed(2):'—';
+ $('radon-30').textContent=mean(report.radon).toFixed(2);
+ $('radon-period-label').textContent=days===30?'30-day average':`${days}-day period average`;
+ $('radon-7-note').textContent=Number.isFinite(latest7)?'Rolling daily means · pCi/L':`Needs 7 consecutive days · ${Math.min(days,7)} available`;
+ const avFan=mean(report.fan);
+ $('fan-avg').textContent=Number.isFinite(avFan)?avFan.toFixed(1)+'%':'—';
+ const count=report.radon.filter(Number.isFinite).length;
+ const suffix=report.partialLast?' · Latest day is partial (so far)':'';
+ $('period').textContent=`${formatDate(report.dates[0])} – ${formatDate(report.dates.at(-1))} · ${count} measured day${count===1?'':'s'} in ${days} calendar-day slot${days===1?'':'s'}${suffix} · Target: ${report.target.toFixed(1)} pCi/L`;
+ $('details').textContent=`Encoding version ${report.version}. ${report.demo?'Simulation only.':'Data unverified; QR is not authenticated.'}`;
+ $('flag').textContent=report.demo?'DEMONSTRATION ONLY — synthetic measurements, not actual SmRF data. Not for health or mitigation decisions.':'UNVERIFIED REPORT — these QR measurements are not authenticated. Not for health or mitigation decisions.';
+ $('chart-note').textContent='Red = recorded radon; orange = trailing 7-day mean (only after seven consecutive days); green dashed = target; blue stepped = commanded fan %. Missing days remain blank. Left axis: pCi/L; right axis: %. A partial latest day is preliminary.';
  drawOverlayChart('overlay-chart',report);
  $('message').style.display='none';$('dashboard').style.display='block';
 }
-function error(message){$('dashboard').style.display='none';const s=$('message');s.style.display='block';s.replaceChildren();const p=document.createElement('p');p.textContent=message;s.append(p);const b=document.createElement('button');b.textContent='Open an example 30-day report';b.addEventListener('click',()=>{location.hash='d='+SmrfHealthFormat.encode(SmrfHealthFormat.sampleData());});s.append(b);}
+function error(message){$('dashboard').style.display='none';const s=$('message');s.style.display='block';s.replaceChildren();const p=document.createElement('p');p.textContent=message;s.append(p);const b=document.createElement('button');b.textContent='Open an example 3-day report';b.addEventListener('click',()=>{location.hash='d='+SmrfHealthFormat.encode(SmrfHealthFormat.sampleData(3,true));});s.append(b);}
 function load(){
  try{let m=/^#d=([A-Za-z0-9_-]+)$/.exec(location.hash);if(!m){error('No QR report data found. Scan the code displayed by the laptop BLE Viewer, or open an example below.');return;}render(SmrfHealthFormat.decode(m[1]));}
  catch(e){error('Cannot decode report: '+(e.message||e));}
