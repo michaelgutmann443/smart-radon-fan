@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>SmRF Mini — nRF QR Matrix Test</title>
+<style>
+:root{--bg:#0f1b29;--panel:#17283d;--line:#365069;--fg:#eff8ff;--muted:#b9c9da;--green:#85e1c5}*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 system-ui,-apple-system,Segoe UI,Arial,sans-serif}
+main{max-width:940px;margin:auto;padding:28px 20px 65px}h1{margin:.1em 0 .4em;font-size:clamp(1.7rem,4vw,2.35rem)}h2{font-size:1.1rem;margin:0 0 12px}
+p{color:var(--muted)}.eyebrow{color:var(--green);text-transform:uppercase;letter-spacing:.12em;font-weight:700;font-size:.8rem}
+.panel{border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:18px;margin:18px 0}button{background:var(--green);border:0;color:#08201b;font-weight:800;padding:11px 16px;border-radius:8px;cursor:pointer;font:inherit}button.secondary{background:#28445c;color:var(--fg)}button:disabled{opacity:.5;cursor:not-allowed}
+.actions{display:flex;gap:12px;flex-wrap:wrap;align-items:center}#status{color:#f2d39d;font-size:.92rem}textarea{width:100%;height:128px;background:#071522;border:1px solid var(--line);border-radius:8px;color:#c8ebf6;padding:12px;font:12px/1.4 ui-monospace,Consolas,monospace;resize:vertical}
+canvas{width:240px;height:240px;image-rendering:pixelated;background:white;display:block;max-width:100%}
+#qrPanel{display:none}.qrflex{display:flex;gap:28px;flex-wrap:wrap;align-items:flex-start}.qrWrap{padding:12px;background:white;border-radius:10px}.qrMeta{min-width:220px;max-width:580px;overflow-wrap:anywhere}.qrMeta p{margin:0 0 12px}a{color:var(--green)}.warning{border:1px solid #94703e;background:#332918;border-radius:10px;padding:11px 15px;color:#f2d8aa;font-size:.9rem}.good{color:var(--green);font-weight:800}
+</style></head><body><main>
+<div class="eyebrow">Residential Radon Solutions · Nordic engineering test</div>
+<h1>SmRF Mini — nRF-generated QR code</h1>
+<p>This page receives a QR matrix produced by the nRF54L15 firmware over USB serial and draws the exact black/white module pattern. <strong>Chrome does not encode the QR code.</strong> The phone then opens SmRF's overlaid Health Report.</p>
+<div class="warning">DEMONSTRATION ONLY — the first firmware QR contains three SYNTHETIC days (Nov 6–8, 2026). It does not contain actual radon measurements or measured fan RPM. Fan hardware output remains disabled.</div>
+<section class="panel"><h2>1 · Connect to Nordic serial console</h2>
+<p>Use Windows Chrome on this HTTPS page. Close the VS Code serial monitor first. Select the board's COM port (often COM3), then press RESET on the nRF DK so it transmits a fresh QR block.</p>
+<div class="actions"><button id="connect">Connect USB serial</button><button id="disconnect" class="secondary" disabled>Disconnect</button><span id="status" role="status">Not connected</span></div>
+</section>
+<section class="panel"><h2>Alternative · Paste the serial log</h2><p>Copy the lines from <code>SMRF_QR_BEGIN</code> through <code>SMRF_QR_END</code> and click Draw.</p>
+<textarea id="pasted" placeholder="SMRF_QR_BEGIN v=2 days=3 modules=...&#10;SMRF_QR_URL https://www.smartradonfan.com/health-report.html#d=...&#10;SMRF_QR_ROW 0101...&#10;SMRF_QR_END"></textarea>
+<div class="actions"><button id="draw" class="secondary">Draw nRF matrix</button><button id="clear" class="secondary">Clear log</button></div>
+</section>
+<section id="qrPanel" class="panel" aria-live="polite"><h2>2 · Scan with iPhone</h2>
+<div class="qrflex"><div class="qrWrap"><canvas id="qr" role="img" aria-label="QR code matrix received from the nRF serial console"></canvas></div>
+<div class="qrMeta"><div id="qrInfo" class="good"></div><p>Point your iPhone Camera at this QR code on the Lenovo laptop and tap the report link.</p><p>Display source: <strong>nRF serial matrix</strong>, not browser-generated QR.</p><p id="qrUrl"></p></div></div></section>
+<p>After scanning, verify that the report says <strong>DEMONSTRATION ONLY</strong> and shows the overlaid radon/fan chart. <a href="https://www.smartradonfan.com/mini-qr-viewer-test.html">Earlier browser-generated demo</a> remains separate.</p>
+</main><script>
+(function(){'use strict';
+const $=id=>document.getElementById(id);let port=null,reader=null,reading=false,buffer='',lines=[];
+const prefix='https://www.smartradonfan.com/health-report.html#d=';
+function status(s){$('status').textContent=s;}
+function parsedBlock(log){
+ const records=String(log).replace(/\r/g,'').split('\n');let block=null,finished=[];
+ for(const raw of records){const line=raw.trim();
+   const start=/^SMRF_QR_BEGIN v=(\d+) days=(\d+) modules=(\d+) demo=(\d+) partial=(\d+)$/.exec(line);
+   if(start){block={v:+start[1],days:+start[2],n:+start[3],demo:+start[4],partial:+start[5],url:null,rows:[]};continue;}
+   if(!block)continue;
+   if(line.startsWith('SMRF_QR_URL ')){block.url=line.slice('SMRF_QR_URL '.length);continue;}
+   if(line.startsWith('SMRF_QR_ROW ')){block.rows.push(line.slice('SMRF_QR_ROW '.length));continue;}
+   if(line==='SMRF_QR_END'){finished.push(block);block=null;}
+ }
+ if(finished.length===0)throw Error('No complete nRF QR frame found. Open serial first and press RESET.');
+ const b=finished.at(-1);
+ if(b.v!==2||b.demo!==1||b.days!==3||b.partial!==1)throw Error('Unexpected firmware demo metadata. This prototype expects a synthetic three-day report.');
+ if(b.n<21||b.n>65||b.n%4!==1||b.rows.length!==b.n)throw Error(`Incomplete QR matrix: expected ${b.n} rows, got ${b.rows.length}.`);
+ for(let i=0;i<b.n;i++)if(b.rows[i].length!==b.n||!/^[01]+$/.test(b.rows[i]))throw Error(`Invalid QR row ${i+1}.`);
+ if(!b.url||!b.url.startsWith(prefix)||!/^[A-Za-z0-9_-]+$/.test(b.url.slice(prefix.length)))throw Error('Invalid report URL received over serial.');
+ return b;
+}
+function render(block){
+ const n=block.n,quiet=4,scale=Math.max(2,Math.floor(240/(n+8)));const canvas=$('qr');canvas.width=canvas.height=(n+quiet*2)*scale;
+ const c=canvas.getContext('2d');c.imageSmoothingEnabled=false;c.fillStyle='white';c.fillRect(0,0,canvas.width,canvas.height);c.fillStyle='black';
+ for(let y=0;y<n;y++)for(let x=0;x<n;x++)if(block.rows[y][x]==='1')c.fillRect((x+quiet)*scale,(y+quiet)*scale,scale,scale);
+ $('qrInfo').textContent=`nRF matrix received · ${n} × ${n} modules · ${block.days} synthetic days`;
+ $('qrUrl').replaceChildren();const link=document.createElement('a');link.href=block.url;link.textContent='Open decoded Health Report';link.target='_blank';link.rel='noopener noreferrer';$('qrUrl').append(link);
+ $('qrPanel').style.display='block';status('Complete nRF QR matrix received. Scan with iPhone.');
+}
+function attempt(log){try{const b=parsedBlock(log);render(b);}catch(e){status(e.message||String(e));}}
+function processLine(line){
+ lines.push(line);if(lines.length>180)lines=lines.slice(-180);
+ if(line.trim()==='SMRF_QR_END')attempt(lines.join('\n'));
+}
+function acceptChunk(chunk){buffer+=chunk;while(true){const end=buffer.indexOf('\n');if(end<0)break;processLine(buffer.slice(0,end));buffer=buffer.slice(end+1);}if(buffer.length>2048)buffer=buffer.slice(-2048);}
+async function disconnect(){reading=false;try{await reader?.cancel();}catch(e){}reader=null;try{await port?.close();}catch(e){}port=null;$('connect').disabled=false;$('disconnect').disabled=true;status('Disconnected');}
+async function connect(){
+ if(!('serial' in navigator)){status('Web Serial unavailable. Use desktop Chrome HTTPS or paste nRF serial logs below.');return;}
+ try{port=await navigator.serial.requestPort();await port.open({baudRate:115200});reader=port.readable.getReader();reading=true;
+ $('connect').disabled=true;$('disconnect').disabled=false;status('Connected — press RESET on the nRF DK.');
+ const dec=new TextDecoder();
+ while(reading){const {value,done}=await reader.read();if(done)break;if(value)acceptChunk(dec.decode(value,{stream:true}));}
+ }catch(e){status('Serial error: '+(e.message||String(e))+' — close other serial monitors and retry.');}
+ finally{if(reader){try{reader.releaseLock();}catch(e){}reader=null;} if(!reading){} else {reading=false;try{await port?.close();}catch(e){}port=null;$('connect').disabled=false;$('disconnect').disabled=true;}}
+}
+$('connect').addEventListener('click',()=>{void connect();});$('disconnect').addEventListener('click',()=>{void disconnect();});
+$('draw').addEventListener('click',()=>attempt($('pasted').value));$('clear').addEventListener('click',()=>{$('pasted').value='';lines=[];status('Cleared');});
+})();
+</script></body></html>
