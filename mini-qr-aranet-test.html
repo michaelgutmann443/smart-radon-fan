@@ -11,6 +11,8 @@ p{color:var(--muted)}.eyebrow{color:var(--green);text-transform:uppercase;letter
 .actions{display:flex;gap:12px;flex-wrap:wrap;align-items:center}#status{color:#f2d39d;font-size:.92rem}textarea{width:100%;height:128px;background:#071522;border:1px solid var(--line);border-radius:8px;color:#c8ebf6;padding:12px;font:12px/1.4 ui-monospace,Consolas,monospace;resize:vertical}
 canvas{width:240px;height:240px;image-rendering:pixelated;background:white;display:block;max-width:100%}
 #qrPanel{display:none}.qrflex{display:flex;gap:28px;flex-wrap:wrap;align-items:flex-start}.qrWrap{padding:12px;background:white;border-radius:10px}.qrMeta{min-width:220px;max-width:580px;overflow-wrap:anywhere}.qrMeta p{margin:0 0 12px}a{color:var(--green)}.warning{border:1px solid #94703e;background:#332918;border-radius:10px;padding:11px 15px;color:#f2d8aa;font-size:.9rem}.good{color:var(--green);font-weight:800}
+#serialLog{max-height:270px;min-height:110px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;color:#d3edfb;background:#071522;border:1px solid var(--line);border-radius:9px;padding:13px;font:12px/1.5 ui-monospace,Consolas,monospace}
+.serialHint{font-size:0.85rem;color:var(--muted)}
 </style></head><body><main>
 <div class="eyebrow">Residential Radon Solutions · Nordic engineering test</div>
 <h1>SmRF Mini — real Aranet QR report (v0.6)</h1>
@@ -20,7 +22,12 @@ canvas{width:240px;height:240px;image-rendering:pixelated;background:white;displ
 <p>Use Chrome on this HTTPS page. Close the VS Code serial monitor, connect to the nRF COM port (often COM3), then click Sync PC Time &amp; Generate Real QR. The browser supplies the current time; the nRF computes and transmits the QR.</p>
 <div class="actions"><button id="connect">Connect USB serial</button><button id="sync" class="secondary" disabled>Sync PC Time &amp; Generate Real QR</button><button id="disconnect" class="secondary" disabled>Disconnect</button><span id="status" role="status">Not connected</span></div>
 </section>
-<div class="panel"><strong>nRF observations:</strong> <span id="dataStats">Not yet requested</span></div><section class="panel"><h2>Alternative · Paste the serial log</h2><p>Copy the lines from <code>SMRF_QR_BEGIN</code> through <code>SMRF_QR_END</code> and click Draw.</p>
+<div class="panel"><strong>nRF observations:</strong> <span id="dataStats">Not yet requested</span></div>
+<section class="panel"><h2>Live serial diagnostic</h2>
+<p class="serialHint">This shows every complete line received from the nRF, including time-sync acknowledgments, errors, and normal Aranet measurements. If it stays empty after sending the time, Chrome's write succeeded but no readable response has reached this port.</p>
+<pre id="serialLog" role="log" aria-live="off">No serial lines received yet.</pre>
+<div class="actions"><button id="copyLog" class="secondary">Copy diagnostic log</button></div>
+</section><section class="panel"><h2>Alternative · Paste the serial log</h2><p>Copy the lines from <code>SMRF_QR_BEGIN</code> through <code>SMRF_QR_END</code> and click Draw.</p>
 <textarea id="pasted" placeholder="SMRF_QR_BEGIN v=2 days=1 modules=...&#10;SMRF_QR_URL https://www.smartradonfan.com/health-report.html#d=...&#10;SMRF_QR_ROW 0101...&#10;SMRF_QR_END"></textarea>
 <div class="actions"><button id="draw" class="secondary">Draw nRF matrix</button><button id="clear" class="secondary">Clear log</button></div>
 </section>
@@ -30,7 +37,7 @@ canvas{width:240px;height:240px;image-rendering:pixelated;background:white;displ
 <p>After scanning, confirm the <strong>UNVERIFIED REPORT</strong> warning and a one-day partial chart with actual Aranet readings and simulated fan commands. <a href="https://www.smartradonfan.com/mini-qr-nrf-test.html">Previous synthetic nRF demo</a> remains separate.</p>
 </main><script>
 (function(){'use strict';
-const $=id=>document.getElementById(id);let port=null,reader=null,reading=false,buffer='',lines=[];
+const $=id=>document.getElementById(id);let port=null,reader=null,reading=false,buffer='',lines=[],receivedLines=[];
 const prefix='https://www.smartradonfan.com/health-report.html#d=';
 function status(s){$('status').textContent=s;}
 function parsedBlock(log){
@@ -61,7 +68,14 @@ function render(block){
 }
 function attempt(log){try{const b=parsedBlock(log);render(b);}catch(e){status(e.message||String(e));}}
 function processLine(line){
- if(line.includes('SMRF_QR_LIVE_STATS '))$('dataStats').textContent=line.trim().replace(/^.*SMRF_QR_LIVE_STATS /,'');
+ receivedLines.push(line.replace(/\r/g,''));
+ if(receivedLines.length>120)receivedLines=receivedLines.slice(-120);
+ $('serialLog').textContent=receivedLines.join('\n');
+ $('serialLog').scrollTop=$('serialLog').scrollHeight;
+ if(line.includes('SMRF_QR_TIME_SYNC:'))status('nRF acknowledged PC time. Awaiting QR or NOT_READY response...');
+ if(line.includes('SMRF_QR_ERROR:'))status(line.trim());
+ if(line.includes('SMRF_QR_LIVE_READY:'))status('nRF UART listener ready. Click Sync PC Time & Generate Real QR.');
+ if(line.includes('SMRF_QR_LIVE_STATS ')$('dataStats').textContent=line.trim().replace(/^.*SMRF_QR_LIVE_STATS /,'');
  if(line.includes('SMRF_QR_LIVE_NOT_READY:'))status('No recent Aranet samples for today. Wait for a new sample and retry.');
  if(line.includes('SMRF_QR_TIME_ERROR:'))status('nRF rejected the PC time command.');
  lines.push(line);if(lines.length>180)lines=lines.slice(-180);
@@ -85,10 +99,14 @@ async function sendTime(){
  try {
    writer=port.writable.getWriter();
    await writer.write(new TextEncoder().encode(cmd));
-   status('PC time sent to nRF; waiting for QR generated from live Aranet data...');
+   status('PC time written to serial port. Check Live serial diagnostic for the nRF response.');
  }catch(e){status('Serial write failed: '+(e.message||String(e)));}
  finally{if(writer)writer.releaseLock();}
 }
+$('copyLog').addEventListener('click',async()=>{
+ try{await navigator.clipboard.writeText(receivedLines.join('\n'));status('Diagnostic log copied.');}
+ catch(e){status('Copy failed; select text in diagnostic box manually.');}
+});
 $('sync').addEventListener('click',()=>{void sendTime();});
 $('connect').addEventListener('click',()=>{void connect();});$('disconnect').addEventListener('click',()=>{void disconnect();});
 $('draw').addEventListener('click',()=>attempt($('pasted').value));$('clear').addEventListener('click',()=>{$('pasted').value='';lines=[];status('Cleared');});
