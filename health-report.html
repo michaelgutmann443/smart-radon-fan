@@ -60,7 +60,7 @@ footer{margin-top:27px;color:var(--muted);font-size:13px}.metadata{color:var(--m
 /* SmRF Mini Health Report QR wire format v2 (PROTOTYPE).
  * Backward compatible: v1 30-day sample QR codes continue to decode.
  * v2: 10 + 3*N bytes, where N is 1..30 consecutive calendar-day slots.
- *  0..1: 'S','R'; 2: version=2; 3: flags (bit0 DEMO, bit1 last day partial)
+ *  0..1: 'S','R'; 2: version=2; 3: flags (bit0 DEMO, bit1 last day partial, bit2 PROVISIONAL DATE)
  *  4..5: first UTC date (days from 2020-01-01), LE
  *  6: day slot count 1..30; 7: radon target in tenths of pCi/L
  *  8..(8+3*N-1): per day (u16 radon*100, u8 commanded fan %)
@@ -115,7 +115,7 @@ footer{margin-top:27px;color:var(--muted);font-size:13px}.metadata{color:var(--m
    const version=b[2],n=b[6],flags=b[3];
    if(version!==1&&version!==2)throw Error('Unsupported report version.');
    if((version===1&&(n!==30||b.length!==100||flags!==1))||
-      (version===2&&(n<1||n>30||b.length!==10+3*n||(flags&~3))))throw Error('Invalid report length or flags.');
+      (version===2&&(n<1||n>30||b.length!==10+3*n||(flags&~7))))throw Error('Invalid report length or flags.');
    const offset=b.length-2,check=crc16(b,offset),given=b[offset]|(b[offset+1]<<8);
    if(check!==given)throw Error('QR payload checksum mismatch.');
    const day=b[4]|(b[5]<<8),target=b[7]/10;
@@ -131,9 +131,9 @@ footer{margin-top:27px;color:var(--muted);font-size:13px}.metadata{color:var(--m
      dates.push(new Date(ORIGIN_MS+(day+i)*DAY_MS).toISOString().slice(0,10));
    }
    if(radon.every(v=>v===null))throw Error('Report contains no measurements.');
-   const partialLast=version===2&&!!(flags&2);
+   const partialLast=version===2&&!!(flags&2),dateProvisional=version===2&&!!(flags&4);
    if(partialLast&&radon[n-1]===null)throw Error('Partial-day flag without a latest measurement.');
-   return {version,demo:!!(flags&1),partialLast,startDate,dates,target,radon,fan,days:n};
+   return {version,demo:!!(flags&1),partialLast,dateProvisional,startDate,dates,target,radon,fan,days:n};
  }
  function sampleData(days=3,partialLast=true){
    if(!Number.isInteger(days)||days<1||days>30)throw Error('Choose 1–30 days.');
@@ -266,11 +266,15 @@ function render(report){
  const avFan=mean(report.fan);
  $('fan-avg').textContent=Number.isFinite(avFan)?avFan.toFixed(1)+'%':'—';
  const count=report.radon.filter(Number.isFinite).length;
- const suffix=report.partialLast?' · Latest day is partial (so far)':'';
+ const suffix=(report.partialLast?' · Partial report':'')+(report.dateProvisional?' · TEST DATE NOT VERIFIED':'');
  $('period').textContent=`${formatDate(report.dates[0])} – ${formatDate(report.dates.at(-1))} · ${count} measured day${count===1?'':'s'} in ${days} calendar-day slot${days===1?'':'s'}${suffix} · Target: ${report.target.toFixed(1)} pCi/L`;
  $('details').textContent=`Encoding version ${report.version}. ${report.demo?'Simulation only.':'Data unverified; QR is not authenticated.'}`;
- $('flag').textContent=report.demo?'DEMONSTRATION ONLY — synthetic measurements, not actual SmRF data. Not for health or mitigation decisions.':'UNVERIFIED ENGINEERING REPORT — radon readings may cover only part of a day; fan percentages are commanded values, not measured RPM. QR data is not authenticated. Not for health or mitigation decisions.';
- $('chart-note').textContent='Red = recorded radon; orange = trailing 7-day mean (only after seven consecutive days); green dashed = target; blue stepped = commanded fan %. Missing days remain blank. Left axis: pCi/L; right axis: %. A partial latest day is preliminary.';
+ $('flag').textContent=report.demo?'DEMONSTRATION ONLY — synthetic measurements, not actual SmRF data. Not for health or mitigation decisions.':(report.dateProvisional?
+ 'REAL ARANET ENGINEERING TEST — this radon value averages a short measurement window, NOT a full calendar day. The displayed date is a TEST PLACEHOLDER, not a verified measurement date. Fan is a simulated SHADOW command, not measured output. QR data is not authenticated. Not for health decisions.':
+ 'UNVERIFIED ENGINEERING REPORT — radon readings may cover only part of a day; fan percentages are commanded values, not measured RPM. QR data is not authenticated. Not for health or mitigation decisions.');
+ $('chart-note').textContent=report.dateProvisional?
+ 'RED = real Aranet recent-window average, BLUE = sampled shadow fan command (not physical output). Only one short-window point is shown; the test date is provisional. GREEN dashed = 2.0 pCi/L target. Left axis pCi/L, right axis %.':
+ 'Red = recorded radon; orange = trailing 7-day mean (only after seven consecutive days); green dashed = target; blue stepped = commanded fan %. Missing days remain blank. Left axis: pCi/L; right axis: %. A partial latest day is preliminary.';
  drawOverlayChart('overlay-chart',report);
  $('message').style.display='none';$('dashboard').style.display='block';
 }
