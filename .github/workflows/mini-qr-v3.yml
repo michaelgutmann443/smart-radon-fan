@@ -1,0 +1,26 @@
+name: SmRF Mini QR v3 website decoder tests
+on:
+  push:
+    branches: [feature/mini-single-qr-history-v3, main]
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate v3 QR payload against independent golden vector
+        run: node tests/qr-v3.test.cjs
+      - name: Validate engineering chart page JavaScript
+        run: |
+          node --check assets/smrf-qr-v3.js
+          python3 - <<'PY'
+          from pathlib import Path
+          html=Path('h.html').read_text()
+          code=html.rsplit('<script>',1)[1].split('</script>',1)[0]
+          Path('/tmp/mini-qr-chart.js').write_text(code)
+          assert 'assets/smrf-qr-v3.js' in html
+          assert 'noindex,nofollow' in html
+          assert 'fan values are' in html.lower()
+          assert 'smrf-mini-qr-control-history.csv' in html
+          PY
+          node --check /tmp/mini-qr-chart.js
