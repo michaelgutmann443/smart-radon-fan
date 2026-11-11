@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>SmRF Mini · Radon + Fan Engineering History</title>
+<meta name="description" content="Internal one-QR SmRF Mini radon and fan time-series diagnostic chart.">
+<style>
+:root{--ink:#13304b;--muted:#5c7085;--edge:#d9e5ed;--radon:#d9534f;--fan:#407fbd;--target:#2f9870}
+*{box-sizing:border-box}
+body{margin:0;background:#f6f9fc;color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+main{max-width:1100px;margin:auto;padding:18px 18px 58px}
+nav{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--edge);padding:12px 0 19px;gap:10px}
+nav a{color:#145c9b;text-decoration:none}.brand{font-size:26px;font-weight:800;color:#082b55}
+nav span{color:var(--muted);font-size:13px;margin-left:8px}
+header{margin:28px 0 20px}h1{font-size:clamp(26px,4vw,41px);margin:7px 0}
+header p,.note{color:var(--muted);margin:0}
+.pill{font-size:12px;letter-spacing:.09em;font-weight:750;color:#16805b;text-transform:uppercase}
+.panel{background:white;border:1px solid var(--edge);border-radius:14px;padding:18px 20px;margin-bottom:16px;box-shadow:0 9px 24px rgba(20,54,79,.035)}
+h2{margin:0 0 9px;font-size:21px}
+#warning{border-left:4px solid #d7a548;background:#fff9e9;padding:12px 15px;font-size:14px;margin-bottom:16px}
+#summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:0 0 16px}
+.stat strong{font-size:27px;display:block;margin:6px 0;font-variant-numeric:tabular-nums}
+.stat label{color:var(--muted);font-size:13px}
+.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin:10px 0 8px}
+.legend i{display:inline-block;width:19px;height:4px;vertical-align:middle;margin-right:5px}
+.chart-view{overflow-x:auto}
+#chart{width:100%;min-width:720px;height:auto}
+svg text{fill:#6b7f91;font:12px system-ui,sans-serif}
+.grid{stroke:#e6edf2;stroke-width:1}
+.scroll{max-height:360px;overflow:auto}table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:9px 8px;text-align:left;border-bottom:1px solid #ebf0f4}
+th{position:sticky;top:0;background:white}
+button{border:0;border-radius:7px;background:#146cab;color:white;font:inherit;padding:9px 13px;cursor:pointer}
+footer{font-size:13px;color:var(--muted);margin-top:19px}
+@media(max-width:700px){main{padding:12px 12px 35px}#summary{grid-template-columns:1fr 1fr}.panel{padding:13px}.stat strong{font-size:22px}}
+</style></head><body><main>
+<nav><a href="index.html" class="brand">SmRF <span>Smart Radon Fan</span></a><a href="health-report.html">Daily health report</a></nav>
+<header><div class="pill">SmRF Mini · Engineering Diagnostics</div>
+<h1>Radon and fan-control history</h1>
+<p>Individual scheduled six-hour radon averages and the corresponding commanded fan percentage, from one Mini QR scan.</p></header>
+<div id="warning">Engineering report: fan values are <strong>commands</strong>, not independently measured fan RPM. Times are rounded to the nearest ten minutes. Data is not cryptographically authenticated and is not a substitute for a professional radon measurement.</div>
+<section id="status" class="panel" role="status">No Mini control-history QR payload found. Scan the QR on the Mini's LCD to view the recorded radon and fan history.</section>
+<div id="dashboard" hidden>
+<section id="summary">
+<div class="panel stat"><label>Latest valid 6h radon</label><strong id="current-radon">—</strong><small>pCi/L</small></div>
+<div class="panel stat"><label>Latest fan command</label><strong id="current-fan">—</strong><small>Percent (shadow in prototype)</small></div>
+<div class="panel stat"><label>Evaluation setting</label><strong id="interval">—</strong><small>6h, 12h or 24h</small></div>
+<div class="panel stat"><label>History records</label><strong id="records">—</strong><small id="span-label">Available control readings</small></div>
+</section>
+<section class="panel">
+<h2>Radon and fan command over time</h2><p id="period" class="note"></p>
+<div class="legend"><span><i style="background:var(--radon)"></i>6h radon average, pCi/L (left scale)</span>
+<span><i style="background:var(--fan)"></i>Commanded fan % (right scale)</span>
+<span><i style="background:var(--target)"></i>Current target</span></div>
+<div class="chart-view"><svg id="chart" role="img" aria-label="Time-series chart of six-hour radon concentration and fan command percentage"></svg></div>
+<p class="note">Gaps are not filled with invented readings. Sensor-unavailable records show no radon point. The nominal interval describes the current setting; if the setting changed, recorded timestamps are used.</p>
+</section>
+<section class="panel"><h2>Measurements</h2><button type="button" id="csv-btn">Export CSV</button>
+<div class="scroll"><table><thead><tr><th>Time (local)</th><th>6h radon (pCi/L)</th><th>Fan command</th></tr></thead>
+<tbody id="rows"></tbody></table></div></section>
+</div>
+<footer>The QR data is decoded locally in this browser from the link fragment; this page does not upload the measurements. Anyone with the complete QR link can read the included data. Residential Radon Solutions, LLC.</footer>
+</main><script src="assets/smrf-qr-v3.js"></script>
+<script>
+(function(){'use strict';
+const $=id=>document.getElementById(id),ns='http://www.w3.org/2000/svg';
+let report=null;
+function svg(tag,attrs){const n=document.createElementNS(ns,tag);
+for(const [k,v] of Object.entries(attrs||{}))n.setAttribute(k,String(v));return n}
+function txt(x,y,value,anchor='middle'){const t=svg('text',{x,y,'text-anchor':anchor});t.textContent=value;return t}
+function fmt(t){return new Date(t*1000).toLocaleString(undefined,{year:'numeric',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})}
+function error(s){$('status').hidden=false;$('dashboard').hidden=true;$('status').textContent=s;}
+function chart(r){
+ const s=$('chart');s.replaceChildren();
+ const W=1010,H=460,L=69,R=69,T=35,B=65,GW=W-L-R,GH=H-T-B;
+ s.setAttribute('viewBox',`0 0 ${W} ${H}`);
+ const samples=r.records;
+ const earliest=samples[0].utcSeconds,latest=samples[samples.length-1].utcSeconds;
+ const right=latest===earliest?latest+3600:latest;
+ const yMax=Math.max(4,Math.ceil(Math.max(...samples.map(x=>x.radon===null?0:x.radon),r.target)*2)/2);
+ const xx=t=>L+GW*(t-earliest)/(right-earliest);
+ const yr=v=>T+GH*(1-v/yMax),yf=v=>T+GH*(1-v/100);
+ for(let j=0;j<=5;j++){
+  const rad=yMax*j/5,y=yr(rad);
+  s.append(svg('line',{x1:L,y1:y,x2:W-R,y2:y,class:'grid'}));
+  s.append(txt(L-12,y+4,rad.toFixed(1),'end'));
+  s.append(txt(W-R+11,T+GH*j/5+4,String(100-j*20)+'%','start'));
+ }
+ s.append(svg('line',{x1:L,y1:T,x2:L,y2:H-B,stroke:'#8296a8'}));
+ s.append(svg('line',{x1:W-R,y1:T,x2:W-R,y2:H-B,stroke:'#8296a8'}));
+ s.append(svg('line',{x1:L,y1:H-B,x2:W-R,y2:H-B,stroke:'#8296a8'}));
+ s.append(txt(24,18,'Radon (pCi/L)','start'));
+ s.append(txt(W-18,18,'Fan %','end'));
+ for(let j=0;j<=4;j++){
+  const v=earliest+(right-earliest)*j/4,x=xx(v);
+  s.append(txt(x,H-32,new Date(v*1000).toLocaleDateString(undefined,{month:'short',day:'numeric'})));
+  s.append(txt(x,H-14,new Date(v*1000).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'})));
+ }
+ const makeLine=(y,color,width,dash)=>s.append(svg('line',{x1:L,x2:W-R,y1:y,y2:y,stroke:color,'stroke-width':width,'stroke-dasharray':dash||''}));
+ makeLine(yr(r.target),'#2f9870',2,'8 6');
+ makeLine(yr(4),'#888',1,'3 6');
+ const allowedGap=r.intervalHours*3600*1.6;
+ for(let i=0;i<samples.length;i++){
+  const v=samples[i],x=xx(v.utcSeconds);
+  if(i>0){
+   const p=samples[i-1],px=xx(p.utcSeconds);
+   if(v.utcSeconds-p.utcSeconds<=allowedGap){
+    s.append(svg('line',{x1:px,y1:yf(p.fan),x2:x,y2:yf(p.fan),stroke:'#407fbd','stroke-width':2.5}));
+    s.append(svg('line',{x1:x,y1:yf(p.fan),x2:x,y2:yf(v.fan),stroke:'#407fbd','stroke-width':2.5}));
+    if(p.radon!==null&&v.radon!==null)
+      s.append(svg('line',{x1:px,y1:yr(p.radon),x2:x,y2:yr(v.radon),stroke:'#d9534f','stroke-width':2.7}));
+   }
+  }
+  const fc=svg('circle',{cx:x,cy:yf(v.fan),r:3.6,fill:'#407fbd'});const ft=svg('title');
+  ft.textContent=fmt(v.utcSeconds)+': fan command '+v.fan+'%';fc.append(ft);s.append(fc);
+  if(v.radon!==null){
+   const rc=svg('circle',{cx:x,cy:yr(v.radon),r:3.9,fill:'#d9534f'});const rt=svg('title');
+   rt.textContent=fmt(v.utcSeconds)+': radon '+v.radon.toFixed(2)+' pCi/L';rc.append(rt);s.append(rc);
+  }
+ }
+}
+function render(r){
+ report=r;$('status').hidden=true;$('dashboard').hidden=false;
+ const vals=r.records.filter(x=>x.radon!==null),latest=r.records[r.records.length-1];
+ $('current-radon').textContent=latest.radon!==null?latest.radon.toFixed(2):'NOT READY';
+ $('current-fan').textContent=latest.fan+'%';
+ $('interval').textContent=r.intervalHours+' hours';
+ $('records').textContent=r.records.length;
+ $('span-label').textContent=((r.endUTC-r.startUTC)/86400).toFixed(1)+' days between first/last record';
+ $('period').textContent=fmt(r.startUTC)+' – '+fmt(r.endUTC)+
+   ' · '+vals.length+' valid radon values, '+(r.records.length-vals.length)+' sensor-unavailable events'+
+   ' · Current target '+r.target.toFixed(1)+' pCi/L';
+ const body=$('rows');body.replaceChildren();
+ r.records.slice().reverse().forEach(v=>{
+  const row=document.createElement('tr');
+  [fmt(v.utcSeconds),v.radon===null?'NOT READY':v.radon.toFixed(2),v.fan+'%'].forEach(value=>{
+   const td=document.createElement('td');td.textContent=value;row.append(td)});
+  body.append(row);
+ });chart(r);
+}
+$('csv-btn').addEventListener('click',()=>{
+ if(!report)return;
+ const csv=['utc_seconds,radon_pci,fan_command_pct'];
+ report.records.forEach(v=>csv.push(v.utcSeconds+','+(v.radon===null?'':v.radon.toFixed(2))+','+v.fan));
+ const blob=new Blob([csv.join('\r\n')+'\r\n'],{type:'text/csv'});
+ const obj=URL.createObjectURL(blob);const a=document.createElement('a');
+ a.href=obj;a.download='smrf-mini-qr-control-history.csv';a.click();URL.revokeObjectURL(obj);
+});
+function load(){
+ try{
+  const m=/^#c=([A-Za-z0-9_-]+)$/.exec(location.hash);
+  if(!m){error('No control-history data found. Scan the single QR displayed on SmRF Mini.');return;}
+  render(SmrfQrV3.decode(m[1]));
+ }catch(e){error('Unable to decode the Mini history QR: '+String(e.message||e));}
+}
+window.addEventListener('hashchange',load);load();
+})();
+</script></body></html>
