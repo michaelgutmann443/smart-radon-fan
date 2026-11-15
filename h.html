@@ -56,11 +56,13 @@ footer{font-size:13px;color:var(--muted);margin-top:19px}
 <p class="note">Gaps are not filled with invented readings. Sensor-unavailable records show no radon point. The nominal interval describes the current setting; if the setting changed, recorded timestamps are used.</p>
 </section>
 <section class="panel"><h2>Measurements</h2><button type="button" id="csv-btn">Export CSV</button>
+<p class="note">CSV includes Pacific local date/time (PST or PDT) alongside the original UTC seconds.</p>
 <div class="scroll"><table><thead><tr><th>Time (local)</th><th>6h radon (pCi/L)</th><th>Fan command</th></tr></thead>
 <tbody id="rows"></tbody></table></div></section>
 </div>
 <footer>The QR data is decoded locally in this browser from the link fragment; this page does not upload the measurements. Anyone with the complete QR link can read the included data. Residential Radon Solutions, LLC.</footer>
 </main><script src="assets/smrf-qr-v3.js"></script>
+<script src="assets/smrf-qr-pacific.js"></script>
 <script>
 (function(){'use strict';
 const $=id=>document.getElementById(id),ns='http://www.w3.org/2000/svg';
@@ -140,8 +142,11 @@ function render(r){
 }
 $('csv-btn').addEventListener('click',()=>{
  if(!report)return;
- const csv=['utc_seconds,radon_pci,fan_command_pct'];
- report.records.forEach(v=>csv.push(v.utcSeconds+','+(v.radon===null?'':v.radon.toFixed(2))+','+v.fan));
+ const csv=['utc_seconds,pacific_datetime,radon_pci,fan_command_pct'];
+ report.records.forEach(v=>csv.push(
+   [v.utcSeconds,SmrfQrPacific.formatPacificTime(v.utcSeconds),
+    v.radon===null?'':v.radon.toFixed(2),v.fan].join(',')
+ ));
  const blob=new Blob([csv.join('\r\n')+'\r\n'],{type:'text/csv'});
  const obj=URL.createObjectURL(blob);const a=document.createElement('a');
  a.href=obj;a.download='smrf-mini-qr-control-history.csv';a.click();URL.revokeObjectURL(obj);
