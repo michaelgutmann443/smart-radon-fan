@@ -41,6 +41,7 @@ footer{font-size:13px;color:var(--muted);margin-top:19px}
 <div id="warning">Engineering report: fan values are <strong>commands</strong>, not independently measured fan RPM. Times are rounded to the nearest ten minutes. Data is not cryptographically authenticated and is not a substitute for a professional radon measurement.</div>
 <section id="status" class="panel" role="status">No Mini control-history QR payload found. Scan the QR on the Mini's LCD to view the recorded radon and fan history.</section>
 <div id="dashboard" hidden>
+<section class="panel" id="fan-diagnostic" hidden aria-live="polite"></section>
 <section id="summary">
 <div class="panel stat"><label>Latest valid 6h radon</label><strong id="current-radon">—</strong><small>pCi/L</small></div>
 <div class="panel stat"><label>Latest fan command</label><strong id="current-fan">—</strong><small>Percent (shadow in prototype)</small></div>
@@ -63,6 +64,7 @@ footer{font-size:13px;color:var(--muted);margin-top:19px}
 <footer>The QR data is decoded locally in this browser from the link fragment; this page does not upload the measurements. Anyone with the complete QR link can read the included data. Residential Radon Solutions, LLC.</footer>
 </main><script src="assets/smrf-qr-v3.js"></script>
 <script src="assets/smrf-qr-pacific.js"></script>
+<script src="assets/smrf-qr-fan.js"></script>
 <script>
 (function(){'use strict';
 const $=id=>document.getElementById(id),ns='http://www.w3.org/2000/svg';
@@ -153,9 +155,10 @@ $('csv-btn').addEventListener('click',()=>{
 });
 function load(){
  try{
-  const m=/^#c=([A-Za-z0-9_-]+)$/.exec(location.hash);
+  const m=/^#c=([A-Za-z0-9_-]+)(?:&f=([A-Za-z0-9_-]+))?$/.exec(location.hash);
   if(!m){error('No control-history data found. Scan the single QR displayed on SmRF Mini.');return;}
   render(SmrfQrV3.decode(m[1]));
+  SmrfQrFan.renderInto($('fan-diagnostic'),m[2]);
  }catch(e){error('Unable to decode the Mini history QR: '+String(e.message||e));}
 }
 window.addEventListener('hashchange',load);load();
