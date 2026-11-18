@@ -23,6 +23,12 @@
     const base=s.replace(/-/g,'+').replace(/_/g,'/');
     const b=Uint8Array.from(atob(base+'='.repeat((4-s.length%4)%4)),
                              ch=>ch.charCodeAt(0));
+    /* Reject noncanonical final base64 padding bits: equivalent strings
+     * should not bypass the exact QR-format validation.
+     */
+    const canonical=btoa(String.fromCharCode(...b))
+       .replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+    if(canonical!==s)throw Error('Noncanonical fan QR encoding.');
     if(b.length!==13||b[0]!==70||b[1]!==1)
       throw Error('Unsupported fan report version.');
     if((b[11]|(b[12]<<8))!==crc16(b,11))
