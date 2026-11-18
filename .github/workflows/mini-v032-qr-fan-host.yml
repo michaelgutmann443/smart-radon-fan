@@ -1,0 +1,21 @@
+name: SmRF Mini QR Fan Decoder v0.32
+on:
+  push:
+    branches:
+      - feature/mini-v032-fan-status-qr
+  pull_request:
+    paths:
+      - 'assets/smrf-qr-fan.js'
+      - 'tests/test-qr-fan-v032.js'
+      - 'h.html'
+      - 'health-report.html'
+jobs:
+  qr-decode:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Verify QR decoder with CRC vector and corrupt input
+        run: node tests/test-qr-fan-v032.js
