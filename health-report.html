@@ -45,6 +45,7 @@ footer{margin-top:27px;color:var(--muted);font-size:13px}.metadata{color:var(--m
 <section id="message" aria-live="polite"></section>
 <div id="dashboard">
 <div class="metadata" id="period"></div>
+<section class="panel" id="fan-diagnostic" hidden aria-live="polite"></section>
 <section class="summary">
 <div class="stat"><label>Latest radon</label><strong id="radon-latest">—</strong><small>Most recent daily value · pCi/L (may be partial)</small></div>
 <div class="stat"><label>7-day avg</label><strong id="radon-7">—</strong><small id="radon-7-note">Rolling radon average · pCi/L</small></div>
@@ -152,6 +153,7 @@ footer{margin-top:27px;color:var(--muted);font-size:13px}.metadata{color:var(--m
 })(typeof window!=='undefined'?window:globalThis);
 
 </script>
+<script src="assets/smrf-qr-fan.js"></script>
 <script>
 (function(){'use strict';
 const $=id=>document.getElementById(id);
@@ -280,7 +282,7 @@ function render(report){
 }
 function error(message){$('dashboard').style.display='none';const s=$('message');s.style.display='block';s.replaceChildren();const p=document.createElement('p');p.textContent=message;s.append(p);const b=document.createElement('button');b.textContent='Open an example 3-day report';b.addEventListener('click',()=>{location.hash='d='+SmrfHealthFormat.encode(SmrfHealthFormat.sampleData(3,true));});s.append(b);}
 function load(){
- try{let m=/^#d=([A-Za-z0-9_-]+)$/.exec(location.hash);if(!m){error('No QR report data found. Scan the code displayed by the laptop BLE Viewer, or open an example below.');return;}render(SmrfHealthFormat.decode(m[1]));}
+ try{let m=/^#d=([A-Za-z0-9_-]+)(?:&f=([A-Za-z0-9_-]+))?$/.exec(location.hash);if(!m){error('No QR report data found. Scan the code displayed by the laptop BLE Viewer, or open an example below.');return;}render(SmrfHealthFormat.decode(m[1]));SmrfQrFan.renderInto($('fan-diagnostic'),m[2]);}
  catch(e){error('Cannot decode report: '+(e.message||e));}
 }
 window.addEventListener('hashchange',load);load();
