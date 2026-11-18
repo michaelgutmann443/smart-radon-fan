@@ -13,7 +13,8 @@ assert.equal(good.dacWriteAccepted,true);
 assert.equal(good.measuredHz,32.74);
 assert.equal(good.expectedHz,32.70);
 assert.equal(good.transitions,2);
-assert.throws(()=>decode('RgEDAEYHygzGDAL7XB'),/checksum/i);
+assert.throws(()=>decode('RgEDAEYHyAzGDAL7XA'),/checksum/i); // changed data byte
+assert.throws(()=>decode('RgEDAEYHygzGDAL7XB'),/noncanonical/i); // padding-bit tamper
 assert.throws(()=>decode('RgEDAEYHygzGDAL7X!'),/characters/i);
 assert.throws(()=>decode(''),/characters/i);
 console.log('SmRF QR fan v1 parser PASS (known CRC vector, malformed payloads)');
