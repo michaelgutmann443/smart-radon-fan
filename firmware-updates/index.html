@@ -27,6 +27,14 @@
 .fw-status{display:inline-block;background:#e7f5ec;color:#176b42;padding:8px 13px;border-radius:100px;font-weight:750;font-size:13px}
 .fw-link{color:#0d4e96;text-decoration:underline;text-underline-offset:3px}
 .fw-divider{border:0;border-top:1px solid #dce5ef;margin:34px 0}
+.fw-download{border:1px solid #bad2e7;background:linear-gradient(115deg,#f1f7fd,#f6fbf8);border-radius:16px;padding:25px;margin:30px 0}
+.fw-download h2{margin:0 0 10px;color:#082a61;font-size:24px}
+.fw-download p{color:#4d647c;line-height:1.6}
+.fw-download-button{display:inline-flex;align-items:center;justify-content:center;min-height:48px;margin:10px 0 12px;padding:12px 19px;border-radius:8px;background:#082a61;color:#fff;text-decoration:none;font-weight:750;max-width:100%;text-align:center}
+.fw-download-button:hover{background:#0d4e96}
+.fw-download-meta{font-size:13px;color:#566f87}
+.fw-download-warn{font-weight:750;color:#8a470c!important}
+
 .fw-small{font-size:13px;color:#60758b;line-height:1.6}
 @media(max-width:760px){.miniContainer{padding:0 18px 28px}.fw-main{padding:32px 0 48px}.fw-grid{grid-template-columns:1fr}.fw-card{padding:20px}.fw-lead{font-size:17px}.fw-note{padding:16px}.miniNav{flex-wrap:wrap}.miniNavlinks{justify-content:flex-start}}
 </style>
@@ -51,6 +59,15 @@
     <strong>Production firmware downloads are not available yet.</strong>
     <p>SmRF Mini is undergoing bench validation. Development-signed test packages are <strong>not approved for field installation</strong>. This page will provide approved release packages and version-specific instructions when they are ready.</p>
   </div>
+  <section class="fw-download" aria-labelledby="bench-downloads">
+    <h2 id="bench-downloads">Bench-test firmware downloads</h2>
+    <p class="fw-download-warn">DEVELOPMENT USE ONLY · Not approved for active radon mitigation installations.</p>
+    <div id="fw-latest" aria-live="polite">
+      <p>Checking whether the latest bench package is available on this website…</p>
+    </div>
+    <p class="fw-download-meta">Previously published package: <a class="fw-link" href="../updates/bench/SmRF-Mini-V0.32.5-BENCH.zip?v=cf550a4" download="SmRF-Mini-V0.32.5-BENCH.zip">V0.32.5 bench ZIP</a>. This is an older test build; do not use it to downgrade a V0.32.6 Mini.</p>
+    <p class="fw-small">On your iPhone, tap the download link, save the ZIP in Files (do not unzip), and select that file in nRF Connect Device Manager. Keep <strong>Erase Application Settings</strong> off. Only update a disconnected bench controller.</p>
+  </section>
   <div class="fw-grid">
     <section class="fw-card">
       <h2>What you'll need</h2>
@@ -91,5 +108,21 @@
   <p>SmRF Mini is under development. Firmware upgrade instructions, production signing, recovery procedures, and field validation remain in progress.</p>
 </footer>
 </div>
+<script>
+(function () {
+  var panel = document.getElementById('fw-latest');
+  var file = '../updates/bench/SmRF-Mini-V0.32.6-BENCH.zip?v=mini-v0326';
+  fetch(file, {method:'HEAD', cache:'no-store'}).then(function (response) {
+    if (!response.ok) throw new Error('Package not yet published');
+    var type = response.headers.get('content-type') || '';
+    if (type.toLowerCase().indexOf('text/html') >= 0) throw new Error('Unexpected response type');
+    panel.innerHTML = '<p><strong>SmRF Mini V0.32.6 — bench test package</strong></p>'
+      + '<a class="fw-download-button" href="' + file + '" download="SmRF-Mini-V0.32.6-BENCH.zip">Download V0.32.6 ZIP</a>'
+      + '<div class="fw-download-meta">Download directly to your iPhone’s Files app. Development-signed; bench testing only.</div>';
+  }).catch(function () {
+    panel.innerHTML = '<p><strong>V0.32.6:</strong> Awaiting upload of the verified build package from the development PC. The previous V0.32.5 bench archive is available below.</p>';
+  });
+})();
+</script>
 </body>
 </html>
