@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="description" content="SmRF Mini firmware updates: iPhone installer instructions, release availability, and Bluetooth pairing information."/>
+<meta name="robots" content="index,follow"/>
+<title>Firmware Updates | SmRF Mini</title>
+<link rel="stylesheet" href="../styles.css?v=27"/>
+<style>
+.fw-main{max-width:1010px;margin:0 auto;padding:48px 0 80px}
+.fw-eyebrow{font-size:13px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:#218a55}
+.fw-title{margin:13px 0 18px;font-size:clamp(37px,5vw,62px);letter-spacing:-.045em;line-height:1.09;color:#082a61}
+.fw-lead{max-width:740px;font-size:19px;line-height:1.6;color:#50657c}
+.fw-note{border-left:4px solid #218a55;border-radius:6px;background:#f2f8f5;padding:19px 24px;margin:32px 0;color:#213f34}
+.fw-note strong{display:block;font-size:17px;margin-bottom:7px}
+.fw-note p{margin:0;line-height:1.6}
+.fw-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:30px 0}
+.fw-card{border:1px solid #dce5ef;border-radius:16px;padding:24px;background:#fff;box-shadow:0 6px 24px rgba(8,42,97,.05)}
+.fw-card h2,.fw-section h2{color:#082a61;margin:0 0 15px;font-size:25px;line-height:1.25}
+.fw-card p,.fw-section p,.fw-section li{color:#536780;line-height:1.65}
+.fw-steps{list-style:none;padding:0;margin:20px 0 0;counter-reset:steps}
+.fw-steps li{counter-increment:steps;position:relative;padding:0 0 24px 51px;min-height:49px}
+.fw-steps li::before{content:counter(steps);position:absolute;top:2px;left:0;display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:#082a61;color:white;font-weight:800;font-size:15px}
+.fw-steps li strong{display:block;color:#10223e}
+.fw-section{margin:40px 0 0}
+.fw-status{display:inline-block;background:#e7f5ec;color:#176b42;padding:8px 13px;border-radius:100px;font-weight:750;font-size:13px}
+.fw-link{color:#0d4e96;text-decoration:underline;text-underline-offset:3px}
+.fw-divider{border:0;border-top:1px solid #dce5ef;margin:34px 0}
+.fw-small{font-size:13px;color:#60758b;line-height:1.6}
+@media(max-width:760px){.miniContainer{padding:0 18px 28px}.fw-main{padding:32px 0 48px}.fw-grid{grid-template-columns:1fr}.fw-card{padding:20px}.fw-lead{font-size:17px}.fw-note{padding:16px}.miniNav{flex-wrap:wrap}.miniNavlinks{justify-content:flex-start}}
+</style>
+</head>
+<body class="miniHome">
+<div class="container miniContainer">
+<header class="nav miniNav">
+  <div class="brand miniBrand"><a class="miniWordmark" href="../index.html" aria-label="SmRF home"><strong>SmRF</strong><span>Smart Radon Fan</span></a></div>
+  <nav aria-label="primary" class="navlinks miniNavlinks">
+    <a href="../index.html">Home</a>
+    <a href="../field-results.html">Field Results</a>
+    <a href="../about.html">About</a>
+    <a href="../index.html#contact">Contact</a>
+    <a class="navActive" href="./" aria-current="page">Firmware Updates</a>
+  </nav>
+</header>
+<main class="fw-main">
+  <div class="fw-eyebrow">SmRF Mini · Installer resources</div>
+  <h1 class="fw-title">Firmware updates, made simple.</h1>
+  <p class="fw-lead">SmRF Mini is being designed for wireless firmware updates using an iPhone and Nordic Semiconductor's nRF Connect Device Manager. No laptop or developer tools should be needed for a field update.</p>
+  <div class="fw-note" role="status">
+    <strong>Production firmware downloads are not available yet.</strong>
+    <p>SmRF Mini is undergoing bench validation. Development-signed test packages are <strong>not approved for field installation</strong>. This page will provide approved release packages and version-specific instructions when they are ready.</p>
+  </div>
+  <div class="fw-grid">
+    <section class="fw-card">
+      <h2>What you'll need</h2>
+      <p>An iPhone with Bluetooth enabled, a properly powered SmRF Mini, and the free Nordic device-management app.</p>
+      <p><a class="fw-link" href="https://apps.apple.com/us/app/nrf-connect-device-manager/id1519423539">Get nRF Connect Device Manager for iPhone</a></p>
+      <p class="fw-small">An official SmRF smartphone app is not required for the initial update workflow.</p>
+    </section>
+    <section class="fw-card">
+      <h2>How pairing works</h2>
+      <p>When the phone requests authenticated Bluetooth pairing, Mini displays a six-digit passkey on its LCD. Enter that code on the iPhone.</p>
+      <p class="fw-small">Non-bondable pairing and the connection after a firmware restart are still being validated. A second pairing request may be necessary during an update.</p>
+    </section>
+  </div>
+  <section class="fw-section" aria-labelledby="workflow">
+    <h2 id="workflow">Planned iPhone update procedure</h2>
+    <p>These are the intended steps once an approved production release is published. Exact app selections and confirmation steps will be finalized after field validation.</p>
+    <ol class="fw-steps">
+      <li><strong>Download the approved firmware.</strong> Open this page in Safari and save the release ZIP into the iPhone's Files app. Do not unzip it.</li>
+      <li><strong>Connect to SmRF Mini.</strong> Open nRF Connect Device Manager, select SmRF-Mini, and enter the six-digit code displayed on Mini's LCD if requested.</li>
+      <li><strong>Select the update package.</strong> In the app's Image screen, select the downloaded ZIP. Keep <em>Erase Application Settings</em> switched off unless the official release instructions explicitly require otherwise.</li>
+      <li><strong>Install and verify.</strong> Follow the release-specific upgrade mode. Allow Mini to reboot and reconnect; complete confirmation if prompted. Verify the new firmware is shown as <strong>Active</strong> and <strong>Confirmed</strong>.</li>
+    </ol>
+  </section>
+  <hr class="fw-divider"/>
+  <section class="fw-section">
+    <h2>Release availability</h2>
+    <p><span class="fw-status">Development validation in progress</span></p>
+    <p>There is currently no approved SmRF Mini production firmware package to download. A future release listing will show the firmware version, release date, file, and instructions.</p>
+    <p class="fw-small">Bench firmware may use development signing keys and is not intended for field deployment. Do not interrupt a firmware update or power-cycle a device running an unconfirmed test image without following the recovery instructions.</p>
+  </section>
+  <section class="fw-section">
+    <h2>Questions or update support?</h2>
+    <p>Contact <a class="fw-link" href="mailto:info@smartradonfan.com">info@smartradonfan.com</a>. Include the Mini's current firmware version and a description of any message shown by Nordic Device Manager.</p>
+  </section>
+</main>
+<footer class="footer miniFooter">
+  <div><strong>SmRF — Smart Radon Fan</strong><span>Residential Radon Solutions, LLC</span></div>
+  <p>SmRF Mini is under development. Firmware upgrade instructions, production signing, recovery procedures, and field validation remain in progress.</p>
+</footer>
+</div>
+</body>
+</html>
