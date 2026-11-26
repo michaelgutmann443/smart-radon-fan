@@ -65,7 +65,7 @@
     <div id="fw-latest" aria-live="polite">
       <p>Checking whether the latest bench package is available on this website…</p>
     </div>
-    <p class="fw-download-meta">Previously published package: <a class="fw-link" href="../updates/bench/SmRF-Mini-V0.32.5-BENCH.zip?v=cf550a4" download="SmRF-Mini-V0.32.5-BENCH.zip">V0.32.5 bench ZIP</a>. This is an older test build; do not use it to downgrade a V0.32.6 Mini.</p>
+    <p class="fw-download-meta">Previous bench package: <a class="fw-link" href="../updates/bench/SmRF-Mini-V0.32.6-BENCH.zip?v=b9edc3f" download="SmRF-Mini-V0.32.6-BENCH.zip">V0.32.6 ZIP</a> (development only). Do not downgrade or install a mismatched firmware version.</p>
     <p class="fw-small">On your iPhone, tap the download link, save the ZIP in Files (do not unzip), and select that file in nRF Connect Device Manager. Keep <strong>Erase Application Settings</strong> off. Only update a disconnected bench controller.</p>
   </section>
   <div class="fw-grid">
@@ -111,17 +111,36 @@
 <script>
 (function () {
   var panel = document.getElementById('fw-latest');
-  var file = '../updates/bench/SmRF-Mini-V0.32.6-BENCH.zip?v=mini-v0326';
-  fetch(file, {method:'HEAD', cache:'no-store'}).then(function (response) {
-    if (!response.ok) throw new Error('Package not yet published');
-    var type = response.headers.get('content-type') || '';
-    if (type.toLowerCase().indexOf('text/html') >= 0) throw new Error('Unexpected response type');
-    panel.innerHTML = '<p><strong>SmRF Mini V0.32.6 — bench test package</strong></p>'
-      + '<a class="fw-download-button" href="' + file + '" download="SmRF-Mini-V0.32.6-BENCH.zip">Download V0.32.6 ZIP</a>'
-      + '<div class="fw-download-meta">Download directly to your iPhone’s Files app. Development-signed; bench testing only.</div>';
-  }).catch(function () {
-    panel.innerHTML = '<p><strong>V0.32.6:</strong> Awaiting upload of the verified build package from the development PC. The previous V0.32.5 bench archive is available below.</p>';
-  });
+  var candidates = [
+    {version:'0.32.7', file:'../updates/bench/SmRF-Mini-V0.32.7-BENCH.zip?v=mini-v0327'},
+    {version:'0.32.6', file:'../updates/bench/SmRF-Mini-V0.32.6-BENCH.zip?v=b9edc3f'}
+  ];
+  function showAt(index) {
+    if (index >= candidates.length) {
+      panel.textContent = 'No downloadable bench package is currently available.';
+      return;
+    }
+    var candidate = candidates[index];
+    fetch(candidate.file, {method:'HEAD', cache:'no-store'}).then(function (response) {
+      if (!response.ok) throw new Error('Missing package');
+      var type = (response.headers.get('content-type') || '').toLowerCase();
+      if (type.indexOf('text/html') >= 0) throw new Error('Not a ZIP');
+      var heading = document.createElement('p');
+      var label = document.createElement('strong');
+      label.textContent = 'SmRF Mini V' + candidate.version + ' — bench test package';
+      heading.appendChild(label);
+      var anchor = document.createElement('a');
+      anchor.className = 'fw-download-button';
+      anchor.href = candidate.file;
+      anchor.download = 'SmRF-Mini-V' + candidate.version + '-BENCH.zip';
+      anchor.textContent = 'Download V' + candidate.version + ' ZIP';
+      var note = document.createElement('div');
+      note.className = 'fw-download-meta';
+      note.textContent = 'Save the ZIP directly to your iPhone Files app. Development-signed; bench testing only.';
+      panel.replaceChildren(heading, anchor, note);
+    }).catch(function () { showAt(index + 1); });
+  }
+  showAt(0);
 })();
 </script>
 </body>
